@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,3 +17,21 @@ async def get_db_session(
 ) -> AsyncGenerator[AsyncSession, None]:
     async with db_manager.async_session() as session:
         yield session
+
+
+async def get_config() -> AppConfig:
+    return get_app_config()
+
+
+@lru_cache
+async def get_templates_singleton(
+    get_config: AppConfig = Depends(get_config),
+):
+    # local import in case jinja2 is not installed
+    from fastapi.templating import Jinja2Templates
+
+    return Jinja2Templates(directory=get_config.frontend.templates_dir)
+
+
+async def get_templates():
+    return get_templates_singleton()

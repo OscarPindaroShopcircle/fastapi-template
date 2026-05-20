@@ -1,7 +1,7 @@
 from functools import lru_cache
-from typing import List, Protocol
+from typing import List, Protocol, Optional
 
-from pydantic import Field, SecretStr
+from pydantic import Field, SecretStr, BaseModel
 from pydantic_settings import BaseSettings
 from pydantic_settings import (
     SettingsConfigDict,
@@ -99,10 +99,23 @@ class SQLiteSettings(BaseSettings):
         return f"sqlite+aiosqlite:///{self.db_path}"
 
 
+class FrontendConfig(BaseModel):
+    """Frontend configuration."""
+
+    enabled: bool = Field(default=True, description="Enable frontend rendering")
+    templates_dir: str = Field(
+        default="templates", description="Path to templates directory"
+    )
+    static_dir: str = Field(
+        default="static", description="Path to static files directory"
+    )
+
+
 class AppConfig(BaseConfig):
     env: str = Field(default="dev")
     database: PostgresConfig = Field(default_factory=PostgresConfig)
     migrator: MigratorConfig = Field(default_factory=MigratorConfig)
+    frontend: Optional[FrontendConfig] = Field(default=None)
 
     # Server configuration
     backend_host: str = Field(

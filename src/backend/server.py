@@ -3,9 +3,10 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .config import get_app_config
+from .config import AppConfig, get_app_config
 from .db.db import DatabaseManager
 from .users.routes import router as users_router
+from fastapi.staticfiles import StaticFiles
 
 
 @asynccontextmanager
@@ -16,8 +17,7 @@ async def lifespan(app: FastAPI):
     await db_manager.close()
 
 
-def create_app() -> FastAPI:
-    config = get_app_config()
+def create_app(config: AppConfig) -> FastAPI:
 
     app = FastAPI(
         title="Fantasy Backend",
@@ -32,6 +32,10 @@ def create_app() -> FastAPI:
         allow_headers=config.cors_allow_headers,
     )
 
+    if config.frontend and config.frontend.enabled:
+        app.mount(
+            "/static", StaticFiles(directory=config.frontend.static_dir), name="static"
+        )
     app.include_router(users_router)
 
     @app.get("/ping")
@@ -41,4 +45,6 @@ def create_app() -> FastAPI:
     return app
 
 
-app = create_app()
+if __name__ == "__main__":
+    config = get_app_config()
+    app = create_app(config)
