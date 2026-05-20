@@ -15,8 +15,19 @@ def get_db_manager(config: AppConfig = Depends(get_app_config)) -> DatabaseManag
 async def get_db_session(
     db_manager: DatabaseManager = Depends(get_db_manager),
 ) -> AsyncGenerator[AsyncSession, None]:
-    async with db_manager.async_session() as session:
+    """Yield a database session that auto-commits on success or rollbacks on failure.
+
+    The caller should NOT call commit() or rollback() — the dependency handles it.
+    """
+    session = db_manager.async_session_maker()
+    try:
         yield session
+        await session.commit()
+    except Exception:
+        await session.rollback()
+        raise
+    finally:
+        await session.close()
 
 
 async def get_config() -> AppConfig:
