@@ -166,4 +166,12 @@ See `docs/clients.md` for detailed conventions and examples.
 
 ## Quick Start
 
+### Run a sample server
+```
+cp .env.example .env
+docker-compose up --build
+```
+
+### Add new features
+
 See `docs/new_feature_workflow.md` for a complete guide on adding new features to the application.

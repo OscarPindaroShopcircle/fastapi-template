@@ -1,11 +1,11 @@
 database:
   user: app_user
-  host: localhost
+  host: db
   port: 5432
   db: backend
 
 migrator:
   user: migrator_user
-  host: localhost
+  host: db
   port: 5432
   db: backend

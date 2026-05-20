@@ -73,6 +73,15 @@ class PostgresConfig(BaseConfig):
         )
 
 
+class MigratorConfig(PostgresConfig):
+    """PostgreSQL credentials for running Alembic migrations.
+
+    Uses a separate, more-privileged role than the runtime app.
+    Only sync_url is meaningful here — Alembic doesn't use async.
+    """
+    pass
+
+
 class SQLiteSettings(BaseSettings):
     """SQLite database configuration."""
 
@@ -92,6 +101,7 @@ class SQLiteSettings(BaseSettings):
 class AppConfig(BaseConfig):
     env: str = Field(default="dev")
     database: PostgresConfig = Field(default_factory=PostgresConfig)
+    migrator: MigratorConfig = Field(default_factory=MigratorConfig)
 
     # Server configuration
     backend_host: str = Field(

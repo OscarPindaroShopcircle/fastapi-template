@@ -4,14 +4,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import get_app_config
-from .dependencies import get_db_manager
+from .db.db import DatabaseManager
 from .users.routes import router as users_router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    db_manager = get_db_manager()
-    await db_manager.initialize_tables()
+    config = get_app_config()
+    db_manager = DatabaseManager(config.database)
     yield
     await db_manager.close()
 
@@ -33,6 +33,10 @@ def create_app() -> FastAPI:
     )
 
     app.include_router(users_router)
+
+    @app.get("/ping")
+    async def ping():
+        return {"status": "ok"}
 
     return app
 

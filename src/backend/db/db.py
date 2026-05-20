@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.orm import Session, sessionmaker, DeclarativeBase, declared_attr
 
-from ..config.config import DatabaseSettingsProtocol
+from ..config import DatabaseSettingsProtocol
 
 from sqlalchemy import MetaData
 
