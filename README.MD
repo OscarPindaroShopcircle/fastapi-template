@@ -164,13 +164,47 @@ Clients encapsulate authentication, error handling, and retry logic, making exte
 
 See `docs/clients.md` for detailed conventions and examples.
 
+## Database and Migrations
+
+This project uses **PostgreSQL** with **Alembic** for schema migrations and a **two-role security model**:
+
+- **`migrator_user`**: Owns the schema, runs migrations (DDL rights)
+- **`app_user`**: Runtime application user (DML only - no table creation/modification)
+
+### Key Principles
+
+- ✅ **All table management MUST be done through Alembic migrations**
+- ❌ Never use `Base.metadata.create_all()` in production
+- ❌ Never grant DDL rights to the runtime application user
+
+### Quick Migration Workflow
+
+1. Define your SQLAlchemy model in `src/backend/db/models/`
+2. Export it in `src/backend/db/models/__init__.py`
+3. Generate migration: `uv run alembic revision --autogenerate -m "description"`
+4. Review the generated file in `alembic/versions/`
+5. Apply migration: `uv run alembic upgrade head` (or restart Docker)
+
+See **`docs/database_migrations.md`** for complete documentation on:
+- Database architecture and security model
+- Configuration files (`.env`, `config.yaml`, `config.docker.yaml`)
+- Detailed migration workflows
+- Best practices and troubleshooting
+
 ## Quick Start
 
 ### Run a sample server
-```
+```bash
 cp .env.example .env
 docker-compose up --build
 ```
+
+The application will:
+1. Start PostgreSQL and create database roles
+2. Run Alembic migrations to create tables
+3. Start the FastAPI application on http://localhost:8000
+
+Visit http://localhost:8000/docs for API documentation.
 
 ### Add new features
 
