@@ -36,8 +36,15 @@ def create_app(config: AppConfig) -> FastAPI:
         app.mount(
             "/static", StaticFiles(directory=config.frontend.static_dir), name="static"
         )
+
+    # normal router import
     app.include_router(users_router)
 
+    # optional frontend routes import
+    if config.frontend and config.frontend.enabled:
+        pass
+
+    # health check endpoint
     @app.get("/ping")
     async def ping():
         return {"status": "ok"}
