@@ -2,4 +2,4 @@ database:
   user: root_admin
   host: localhost
   port: 5432
-  db: fantasy_db
+  db: database
