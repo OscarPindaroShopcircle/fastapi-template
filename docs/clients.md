@@ -206,10 +206,10 @@ async def test_client_success():
     with patch("httpx.AsyncClient.post") as mock_post:
         mock_post.return_value.json.return_value = {"status": "success"}
         mock_post.return_value.status_code = 200
-        
+
         client = ExternalServiceClient()
         result = await client.make_request("/test", {})
-        
+
         assert result["status"] == "success"
 ```
 
@@ -220,9 +220,9 @@ async def test_client_success():
 @pytest.mark.asyncio
 async def test_real_api_call():
     client = ExternalServiceClient(api_key="test_key")
-    
+
     result = await client.make_request("/test", {"query": "test"})
-    
+
     assert "results" in result
     await client.close()
 ```

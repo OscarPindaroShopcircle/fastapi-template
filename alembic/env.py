@@ -7,7 +7,6 @@ from alembic import context
 
 from src.backend.config import get_app_config
 from src.backend.db.db import Base
-import src.backend.db.models
 
 config = context.config
 
@@ -16,7 +15,7 @@ if config.config_file_name is not None:
 
 app_config = get_app_config()
 # CHANGED: use migrator credentials, not the app's runtime credentials
-config.set_main_option('sqlalchemy.url', app_config.migrator.sync_url)
+config.set_main_option("sqlalchemy.url", app_config.migrator.sync_url)
 
 target_metadata = Base.metadata
 
@@ -40,9 +39,7 @@ def run_migrations_online() -> None:
         poolclass=pool.NullPool,
     )
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
         with context.begin_transaction():
             context.run_migrations()
 

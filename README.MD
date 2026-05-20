@@ -89,7 +89,7 @@ In general, unit testing is not really useful for API development, since most of
 I personally despise mocks, but I understand their use cases.
 
 ### Unit Tests
-**Runtime:** Milliseconds  
+**Runtime:** Milliseconds
 **Purpose:** Test isolated, pure functions / classes without external dependencies
 
 - Test simple, self-contained components (e.g., string validators, calculators)
@@ -99,7 +99,7 @@ I personally despise mocks, but I understand their use cases.
 **Objective:** Ensure individual functions work correctly and prevent regressions
 
 ### Integration Tests
-**Runtime:** Seconds  
+**Runtime:** Seconds
 **Purpose:** Test business logic with real database connections
 
 - Test `service.py` and `repository.py` with actual database connections
@@ -111,7 +111,7 @@ I personally despise mocks, but I understand their use cases.
 **Objective:** Ensure features work correctly end-to-end and maintain functional consistency
 
 ### End-to-End Tests
-**Runtime:** Seconds to minutes  
+**Runtime:** Seconds to minutes
 **Purpose:** Test complete user workflows from an external perspective
 
 - Treat the application as a black box (no access to internal state)
@@ -123,7 +123,7 @@ I personally despise mocks, but I understand their use cases.
 **Objective:** Ensure the application meets business requirements in production-like conditions
 
 ### Fuzzy Tests
-**Runtime:** Minutes  
+**Runtime:** Minutes
 **Purpose:** Test application robustness with random inputs
 
 - Generate random inputs to explore multiple code paths
@@ -134,7 +134,7 @@ I personally despise mocks, but I understand their use cases.
 **Objective:** Discover edge cases and ensure system stability under unexpected inputs
 
 ### Performance Tests
-**Runtime:** heavily dependent 
+**Runtime:** heavily dependent
 **Purpose:** Measure system performance under load and identify bottlenecks
 
 - Test response times, throughput, and resource utilization under various load conditions

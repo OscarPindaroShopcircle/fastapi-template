@@ -24,7 +24,9 @@ class UserRepository:
         result = await self.db.execute(select(UserModel))
         return list(result.scalars().all())
 
-    async def update_user(self, user_id: int, user_data: UserUpdate) -> UserModel | None:
+    async def update_user(
+        self, user_id: int, user_data: UserUpdate
+    ) -> UserModel | None:
         user = await self.get_user(user_id)
         if user is None:
             return None

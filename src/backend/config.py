@@ -79,6 +79,7 @@ class MigratorConfig(PostgresConfig):
     Uses a separate, more-privileged role than the runtime app.
     Only sync_url is meaningful here — Alembic doesn't use async.
     """
+
     pass
 
 

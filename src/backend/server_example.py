@@ -1,12 +1,10 @@
 from contextlib import asynccontextmanager
 from typing import List
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from pydantic import BaseModel, Field
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from .dependencies import get_db_manager, get_db_session
-from .db.db import DatabaseManager
+from .dependencies import get_db_manager
 
 
 class User(BaseModel):
@@ -37,11 +35,37 @@ USERS_DATA = [
 ]
 
 BOOKS_DATA = [
-    Book(id=1, title="The Great Gatsby", author="F. Scott Fitzgerald", year=1925, isbn="978-0-7432-7356-5"),
-    Book(id=2, title="To Kill a Mockingbird", author="Harper Lee", year=1960, isbn="978-0-06-112008-4"),
-    Book(id=3, title="1984", author="George Orwell", year=1949, isbn="978-0-452-28423-4"),
-    Book(id=4, title="Pride and Prejudice", author="Jane Austen", year=1813, isbn="978-0-14-143951-8"),
-    Book(id=5, title="The Catcher in the Rye", author="J.D. Salinger", year=1951, isbn="978-0-316-76948-0"),
+    Book(
+        id=1,
+        title="The Great Gatsby",
+        author="F. Scott Fitzgerald",
+        year=1925,
+        isbn="978-0-7432-7356-5",
+    ),
+    Book(
+        id=2,
+        title="To Kill a Mockingbird",
+        author="Harper Lee",
+        year=1960,
+        isbn="978-0-06-112008-4",
+    ),
+    Book(
+        id=3, title="1984", author="George Orwell", year=1949, isbn="978-0-452-28423-4"
+    ),
+    Book(
+        id=4,
+        title="Pride and Prejudice",
+        author="Jane Austen",
+        year=1813,
+        isbn="978-0-14-143951-8",
+    ),
+    Book(
+        id=5,
+        title="The Catcher in the Rye",
+        author="J.D. Salinger",
+        year=1951,
+        isbn="978-0-316-76948-0",
+    ),
 ]
 
 
