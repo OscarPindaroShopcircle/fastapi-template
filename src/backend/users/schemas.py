@@ -1,12 +1,13 @@
 from datetime import datetime
 from typing import Annotated
 
-from pydantic import Field
+from pydantic import EmailStr, Field
 
-from ..schemas import AppBaseModelStripped
+from ..db.enums import UserRole
+from ..schemas import AppBaseModel
 
 
-class UserCreate(AppBaseModelStripped):
+class UserCreate(AppBaseModel):
     name: Annotated[
         str,
         Field(
@@ -16,9 +17,16 @@ class UserCreate(AppBaseModelStripped):
             description="User's full name",
         ),
     ]
+    email: Annotated[
+        EmailStr,
+        Field(
+            examples=["john@example.com"],
+            description="User's email address",
+        ),
+    ]
 
 
-class User(AppBaseModelStripped):
+class User(AppBaseModel):
     id: Annotated[int, Field(examples=[1], description="User ID")]
     name: Annotated[
         str,
@@ -29,6 +37,20 @@ class User(AppBaseModelStripped):
             description="User's full name",
         ),
     ]
+    email: Annotated[
+        EmailStr,
+        Field(
+            examples=["john@example.com"],
+            description="User's email address",
+        ),
+    ]
+    role: Annotated[
+        UserRole,
+        Field(default=UserRole.MEMBER, description="User role"),
+    ]
+    is_active: Annotated[
+        bool, Field(default=True, description="Whether the user is active")
+    ]
     created_at: Annotated[
         datetime, Field(description="Timestamp when user was created")
     ]
@@ -37,7 +59,7 @@ class User(AppBaseModelStripped):
     ]
 
 
-class UserResponse(AppBaseModelStripped):
+class UserResponse(AppBaseModel):
     id: Annotated[int, Field(examples=[1], description="User ID")]
     name: Annotated[
         str,
@@ -48,6 +70,20 @@ class UserResponse(AppBaseModelStripped):
             description="User's full name",
         ),
     ]
+    email: Annotated[
+        EmailStr,
+        Field(
+            examples=["john@example.com"],
+            description="User's email address",
+        ),
+    ]
+    role: Annotated[
+        UserRole,
+        Field(default=UserRole.MEMBER, description="User role"),
+    ]
+    is_active: Annotated[
+        bool, Field(default=True, description="Whether the user is active")
+    ]
     created_at: Annotated[
         datetime, Field(description="Timestamp when user was created")
     ]
@@ -56,7 +92,7 @@ class UserResponse(AppBaseModelStripped):
     ]
 
 
-class UserUpdate(AppBaseModelStripped):
+class UserUpdate(AppBaseModel):
     name: Annotated[
         str,
         Field(
@@ -68,5 +104,5 @@ class UserUpdate(AppBaseModelStripped):
     ]
 
 
-class UserDelete(AppBaseModelStripped):
+class UserDelete(AppBaseModel):
     pass

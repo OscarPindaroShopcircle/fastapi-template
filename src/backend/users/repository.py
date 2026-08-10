@@ -1,7 +1,9 @@
+import uuid
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..db.models.user import UserModel
+from ..db.models.core.user import UserModel
 from .schemas import UserCreate, UserUpdate
 
 
@@ -10,13 +12,13 @@ class UserRepository:
         self.db = db
 
     async def create_user(self, user_data: UserCreate) -> UserModel:
-        user = UserModel(name=user_data.name)
+        user = UserModel(name=user_data.name, email=user_data.email)
         self.db.add(user)
         await self.db.flush()
         await self.db.refresh(user)
         return user
 
-    async def get_user(self, user_id: int) -> UserModel | None:
+    async def get_user(self, user_id: uuid.UUID) -> UserModel | None:
         result = await self.db.execute(select(UserModel).where(UserModel.id == user_id))
         return result.scalar_one_or_none()
 
@@ -25,7 +27,7 @@ class UserRepository:
         return list(result.scalars().all())
 
     async def update_user(
-        self, user_id: int, user_data: UserUpdate
+        self, user_id: uuid.UUID, user_data: UserUpdate
     ) -> UserModel | None:
         user = await self.get_user(user_id)
         if user is None:
@@ -36,7 +38,7 @@ class UserRepository:
         await self.db.refresh(user)
         return user
 
-    async def delete_user(self, user_id: int) -> bool:
+    async def delete_user(self, user_id: uuid.UUID) -> bool:
         user = await self.get_user(user_id)
         if user is None:
             return False

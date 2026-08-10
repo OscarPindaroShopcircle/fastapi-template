@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -37,7 +39,7 @@ async def create_user_endpoint(
     },
 )
 async def get_user_endpoint(
-    user_id: int,
+    user_id: uuid.UUID,
     db: AsyncSession = Depends(get_db_session),
 ):
     """Retrieve a single user by their ID."""
@@ -71,7 +73,7 @@ async def get_all_users_endpoint(
     },
 )
 async def update_user_endpoint(
-    user_id: int,
+    user_id: uuid.UUID,
     user_data: UserUpdate,
     db: AsyncSession = Depends(get_db_session),
 ):
@@ -91,7 +93,7 @@ async def update_user_endpoint(
     },
 )
 async def delete_user_endpoint(
-    user_id: int,
+    user_id: uuid.UUID,
     db: AsyncSession = Depends(get_db_session),
 ):
     """Delete a user by their ID."""

@@ -20,25 +20,22 @@ _base_config = dict(
     validate_default=True,
     validate_assignment=True,
     use_enum_values=True,
+    str_strip_whitespace=True,
 )
 
 
 class AppBaseModel(BaseModel):
-    """Base model — preserves original whitespace in string fields."""
+    """Base model for all app schemas.
+
+    Strips leading/trailing whitespace from string fields, camel-cases
+    aliases, and validates defaults and assignments.
+    """
 
     model_config = ConfigDict(**_base_config, from_attributes=True)
 
     def serializable_dict(self, **kwargs):
         """Return a dict which contains only serializable fields."""
         return jsonable_encoder(self.model_dump())
-
-
-class AppBaseModelStripped(AppBaseModel):
-    """Base model — strips leading/trailing whitespace from all string fields."""
-
-    model_config = ConfigDict(
-        **_base_config, str_strip_whitespace=True, from_attributes=True
-    )
 
 
 T = TypeVar("T")
@@ -48,3 +45,16 @@ class ListResponse(AppBaseModel, Generic[T]):
     """Generic wrapper for list responses to allow future metadata extension."""
 
     data: List[T]
+
+
+class PagedResponse(AppBaseModel, Generic[T]):
+    """Generic wrapper for paginated list responses.
+
+    ``total`` is the full count of matching rows (not just the page slice),
+    so clients can render total pages. ``page`` is 1-indexed.
+    """
+
+    data: List[T]
+    total: int
+    page: int
+    page_size: int
