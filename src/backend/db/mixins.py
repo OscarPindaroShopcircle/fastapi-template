@@ -3,7 +3,7 @@ import uuid
 from datetime import UTC, datetime
 
 import uuid_utils
-from sqlalchemy import DateTime, Integer, String, func
+from sqlalchemy import DateTime, Float, Integer, Numeric, String, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import MappedColumn, mapped_column
 
@@ -167,4 +167,64 @@ class AuditMixin:
     updated_by: MappedColumn[str | None] = mapped_column(
         String(255),
         nullable=True,
+    )
+
+
+# ---------------------------------------------------------------------------
+# General-purpose observability mixins
+#
+# Not AI-specific — useful for anything whose runtime cost/latency we want to
+# track (jobs, API calls, model inferences, ...).
+# ---------------------------------------------------------------------------
+
+
+class ExecutionTimeMixin:
+    """Tracks how long an operation took.
+
+    Stored as a single duration in milliseconds for simplicity. If you need
+    absolute wall-clock timing instead, swap this for started_at / completed_at
+    timestamp columns and compute the delta on read.
+    """
+
+    duration_ms: MappedColumn[float | None] = mapped_column(
+        Float,
+        nullable=True,
+        default=None,
+    )
+
+
+class ComputeCostMixin:
+    """Tracks the monetary cost of producing a row (e.g. LLM token spend).
+
+    Numeric (not Float) to avoid floating-point rounding on money. Currency is
+    a plain ISO-4217-ish string; keep it explicit rather than assuming USD.
+    """
+
+    cost: MappedColumn[float | None] = mapped_column(
+        Numeric(12, 6),
+        nullable=True,
+        default=None,
+    )
+    currency: MappedColumn[str | None] = mapped_column(
+        String(3),
+        nullable=True,
+        default=None,
+    )
+
+
+class TypeMixin:
+    """Generic free-string 'type' discriminator column.
+
+    NOTE: this is a fallback only. Prefer a dedicated SQLAlchemy ``Enum``
+    column on the concrete model (as FileModel does with StorageType) so the
+    valid values are enforced at the DB level. This mixin exists for cases
+    where the set of types is genuinely open-ended / unknown up front.
+
+    Capped at 32 chars (not 255) — short discriminator values, kept tight for
+    fast filtering and a low memory footprint.
+    """
+
+    type: MappedColumn[str] = mapped_column(
+        String(32),
+        nullable=False,
     )
