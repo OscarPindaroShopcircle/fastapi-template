@@ -1,9 +1,10 @@
+import uuid
 from datetime import datetime
-from typing import Generic, List, TypeVar
+from typing import Annotated, Generic, List, TypeVar
 from zoneinfo import ZoneInfo
 
 from fastapi.encoders import jsonable_encoder
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, BeforeValidator, ConfigDict, Field
 from pydantic.alias_generators import to_camel
 
 
@@ -23,6 +24,11 @@ _base_config = dict(
     str_strip_whitespace=True,
 )
 
+UUIDField = Annotated[
+    uuid.UUID,
+    BeforeValidator(lambda v: v if isinstance(v, uuid.UUID) else uuid.UUID(str(v))),
+]
+
 
 class AppBaseModel(BaseModel):
     """Base model for all app schemas.
@@ -36,6 +42,17 @@ class AppBaseModel(BaseModel):
     def serializable_dict(self, **kwargs):
         """Return a dict which contains only serializable fields."""
         return jsonable_encoder(self.model_dump())
+
+
+class TimestampMixin(BaseModel):
+    """Pydantic mixin mirroring the SQLAlchemy ``TimestampMixin``.
+
+    Inherit on response schemas that expose ``created_at`` / ``updated_at``
+    so the fields and their annotations are declared once.
+    """
+
+    created_at: Annotated[datetime, Field(description="Creation timestamp")]
+    updated_at: Annotated[datetime, Field(description="Last update timestamp")]
 
 
 T = TypeVar("T")

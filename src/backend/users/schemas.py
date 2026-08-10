@@ -1,10 +1,9 @@
-from datetime import datetime
 from typing import Annotated
 
 from pydantic import EmailStr, Field
 
-from ..db.enums import UserRole
-from ..schemas import AppBaseModel
+from ..db.models.core.enums import UserRole
+from ..schemas import AppBaseModel, TimestampMixin, UUIDField
 
 
 class UserCreate(AppBaseModel):
@@ -26,8 +25,10 @@ class UserCreate(AppBaseModel):
     ]
 
 
-class User(AppBaseModel):
-    id: Annotated[int, Field(examples=[1], description="User ID")]
+class User(AppBaseModel, TimestampMixin):
+    id: Annotated[
+        UUIDField, Field(examples=["01J5KQ3X-uuid-example"], description="User ID")
+    ]
     name: Annotated[
         str,
         Field(
@@ -51,16 +52,12 @@ class User(AppBaseModel):
     is_active: Annotated[
         bool, Field(default=True, description="Whether the user is active")
     ]
-    created_at: Annotated[
-        datetime, Field(description="Timestamp when user was created")
-    ]
-    updated_at: Annotated[
-        datetime, Field(description="Timestamp when user was last updated")
-    ]
 
 
-class UserResponse(AppBaseModel):
-    id: Annotated[int, Field(examples=[1], description="User ID")]
+class UserResponse(AppBaseModel, TimestampMixin):
+    id: Annotated[
+        UUIDField, Field(examples=["01J5KQ3X-uuid-example"], description="User ID")
+    ]
     name: Annotated[
         str,
         Field(
@@ -83,12 +80,6 @@ class UserResponse(AppBaseModel):
     ]
     is_active: Annotated[
         bool, Field(default=True, description="Whether the user is active")
-    ]
-    created_at: Annotated[
-        datetime, Field(description="Timestamp when user was created")
-    ]
-    updated_at: Annotated[
-        datetime, Field(description="Timestamp when user was last updated")
     ]
 
 
