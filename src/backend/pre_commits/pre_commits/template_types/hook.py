@@ -43,7 +43,7 @@ EXIT_OK = 0
 EXIT_ERROR = 1
 EXIT_USAGE = 2
 
-DEFAULT_ENV_FACTORY = "backend.dependencies:_build_templates"
+DEFAULT_ENV_FACTORY = "backend.jinja:_build_templates"
 
 # soft_wrap keeps one diagnostic on one line, so output stays greppable and
 # `file:line:` prefixes are not broken across terminal-width boundaries.
@@ -101,21 +101,22 @@ def _import_object(dotted: str) -> object:
 
 
 def _build_environment(templates_dir: Path, factory: str):
-    """The app's own Jinja environment when available, else a bare one.
+    """The app's own Jinja environment.
 
     Filters are resolved at compile time, so an environment missing the app's
     custom filters would report phantom errors on templates that use them.
+    Failing to build the real environment is a hard error, not a fallback case:
+    a bare ``Environment`` would silently skip the app's custom filters and
+    give false confidence, which is worse than a loud failure.
     """
     try:
         built = _import_object(factory)(str(templates_dir))
     except Exception as exc:
-        from jinja2 import Environment, FileSystemLoader
-
-        print_warning(
-            f"could not use env factory '{factory}' ({exc}); "
-            "falling back to a bare Jinja environment, so custom filters are unknown"
-        )
-        return Environment(loader=FileSystemLoader(templates_dir))
+        raise ResolutionError(
+            f"could not build env factory '{factory}' ({exc}). "
+            "The application may not be packaged -- check your uv pyproject.toml -- "
+            f"or the factory '{factory}' has been moved."
+        ) from exc
     return getattr(built, "env", built)
 
 

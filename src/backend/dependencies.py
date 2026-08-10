@@ -1,7 +1,6 @@
-from functools import lru_cache
 from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession
-
+from .jinja import _build_templates
 from .config import get_app_config, AppConfig
 from .db.db import DatabaseManager
 from fastapi import Depends
@@ -34,15 +33,17 @@ async def get_config() -> AppConfig:
     return get_app_config()
 
 
-@lru_cache
-async def get_templates_singleton(
-    get_config: AppConfig = Depends(get_config),
-):
-    # local import in case jinja2 is not installed
-    from fastapi.templating import Jinja2Templates
+def get_templates(config: AppConfig = Depends(get_app_config)):
+    """Return the shared ``Jinja2Templates`` instance.
 
-    return Jinja2Templates(directory=get_config.frontend.templates_dir)
+    Requires ``frontend`` to be configured -- a view route depending on this
+    only runs when the frontend is enabled, so a missing config here is a
+    misconfiguration worth surfacing loudly.
+    """
+    if config.frontend is None:
+        raise RuntimeError(
+            "Templates requested but no `frontend` config is set; "
+            "add a `frontend:` block to config.yaml."
+        )
 
-
-async def get_templates():
-    return get_templates_singleton()
+    return _build_templates(config.frontend.templates_dir)
