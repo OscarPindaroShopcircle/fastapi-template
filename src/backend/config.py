@@ -111,11 +111,54 @@ class FrontendConfig(BaseModel):
     )
 
 
+class LoggingConfig(BaseModel):
+    """Application logging configuration.
+
+    All modules use ``logging.getLogger(__name__)`` and inherit from the root
+    logger configured in ``log.py`` — no per-module handlers needed.
+    """
+
+    level: str = Field(default="INFO", alias="LOGGING__LEVEL")
+    dir: str = Field(default="logs", alias="LOGGING__DIR")
+
+
+class GoogleSSOConfig(BaseModel):
+    """Google OAuth/OIDC credentials for fastapi-sso."""
+
+    client_id: str
+    client_secret: SecretStr
+
+
+class AuthConfig(BaseModel):
+    """Authentication configuration — JWT tokens, Google SSO, invitations."""
+
+    google: Optional[GoogleSSOConfig] = None
+    jwt_secret: SecretStr
+    access_token_expire_minutes: int = 15
+    refresh_token_expire_days: int = 30
+    invitation_expire_days: int = 7
+    bootstrap_admin_email: Optional[str] = None
+    redirect_uri: str = "http://localhost:8000/auth/callback"
+    cookie_secure: Optional[bool] = None  # None = auto (True unless env=dev)
+
+
+class StorageConfig(BaseModel):
+    """Local-disk storage settings for uploaded files."""
+
+    storage_root: str = Field(
+        default="./data/uploads",
+        description="Root directory uploaded files are written under",
+    )
+
+
 class AppConfig(BaseConfig):
     env: str = Field(default="dev")
     database: PostgresConfig = Field(default_factory=PostgresConfig)
     migrator: MigratorConfig = Field(default_factory=MigratorConfig)
     frontend: Optional[FrontendConfig] = Field(default=None)
+    logging: LoggingConfig = Field(default_factory=LoggingConfig)
+    auth: Optional[AuthConfig] = Field(default=None)
+    storage: StorageConfig = Field(default_factory=StorageConfig)
 
     # Server configuration
     backend_host: str = Field(
