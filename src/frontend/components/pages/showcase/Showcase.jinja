@@ -143,6 +143,19 @@
     </section>
 
     <section class="showcase-section">
+      <h2>Dividers</h2>
+      <p class="showcase-note">M3 dividers — full width and labeled (centered text).</p>
+      <div style="display: flex; flex-direction: column; gap: var(--sp-4); max-width: 480px;">
+        <div>
+          <span style="font-size: var(--text-sm); color: var(--clr-text-secondary);">Above</span>
+          <common.Divider />
+          <span style="font-size: var(--text-sm); color: var(--clr-text-secondary);">Below</span>
+        </div>
+        <common.Divider label="or" />
+      </div>
+    </section>
+
+    <section class="showcase-section">
       <h2>Alerts</h2>
       <p class="showcase-note">Status message blocks — the block-level sibling of Pills. Same status token vocabulary.</p>
       <div style="display: flex; flex-direction: column; gap: var(--sp-3); max-width: 480px;">

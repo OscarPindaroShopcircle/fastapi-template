@@ -68,19 +68,6 @@
   color: var(--clr-accent-hover);
 }
 
-.login-divider {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
+.login-page .divider {
   margin: var(--sp-5) 0;
-  color: var(--clr-text-muted);
-  font-size: var(--text-xs);
-}
-
-.login-divider::before,
-.login-divider::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: var(--clr-border);
 }
