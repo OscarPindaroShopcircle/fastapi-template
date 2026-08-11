@@ -13,12 +13,14 @@
       </span>
       <span class="sidebar-link-label">Home</span>
     </a>
+
     {% if current_user and current_user.role == 'admin' %}
-    <a href="/admin" class="sidebar-link {{ 'sidebar-link-active' if active == 'admin' else '' }}">
+    <span class="sidebar-section-label">Admin</span>
+    <a href="/admin/users" class="sidebar-link {{ 'sidebar-link-active' if active == 'admin-users' else '' }}">
       <span class="sidebar-link-icon">
-        <common.Icon name="shield" size=20 />
+        <common.Icon name="users" size=20 />
       </span>
-      <span class="sidebar-link-label">Admin</span>
+      <span class="sidebar-link-label">Users</span>
       {% if badges and badges.get('admin') %}
       <span class="sidebar-link-badge">{{ badges['admin'] }}</span>
       {% endif %}

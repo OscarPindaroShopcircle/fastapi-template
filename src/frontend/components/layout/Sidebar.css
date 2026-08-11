@@ -85,6 +85,20 @@
   gap: var(--sp-1);
 }
 
+/* M3 section label — muted heading above a group of links */
+.sidebar-section-label {
+  padding: var(--sp-4) var(--sp-4) var(--sp-1);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--clr-nav-link);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sidebar-collapsed .sidebar-section-label {
+  display: none;
+}
+
 .sidebar-link {
   display: flex;
   align-items: center;

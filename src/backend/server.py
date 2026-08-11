@@ -54,9 +54,19 @@ def create_app(config: AppConfig | None = None) -> FastAPI:
 
     # optional frontend routes
     if config.frontend and config.frontend.enabled:
+        from .auth.views import router as auth_views_router  # noqa: PLC0415
+        from .users.views import router as users_views_router  # noqa: PLC0415
         from .views import router as views_router  # noqa: PLC0415
 
+        app.include_router(auth_views_router)
+        app.include_router(users_views_router)
         app.include_router(views_router)
+
+        # Dev-only: mount the component showcase
+        if config.env == "dev":
+            from .showcase.views import router as showcase_router  # noqa: PLC0415
+
+            app.include_router(showcase_router)
 
     # health check endpoint
     @app.get("/ping")
