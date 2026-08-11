@@ -5,8 +5,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..config import AppConfig
 from ..db.models.core.enums import UserRole
-from ..db.models import InvitationModel, UserAuthProviderModel, UserModel
-from .exceptions import NotInvited
+from ..db.models import (
+    InvitationModel,
+    UserAuthProviderModel,
+    UserModel,
+    UserPasswordModel,
+)
+from .exceptions import AuthError, InvalidCredentials, NotInvited
+from .password import hash_password, verify_password
+from .schemas import RegisterRequest
 
 
 async def find_by_provider(
@@ -105,4 +112,62 @@ async def login_with_provider(
         )
     )
     await db.flush()
+    return user
+
+
+async def register_with_password(
+    db: AsyncSession, body: RegisterRequest, config: AppConfig
+) -> UserModel:
+    """Create a new user with a password.
+
+    Gated by a pending invitation or the bootstrap admin email — no open
+    self-registration. If the email already has a user, raises ``AuthError``.
+    """
+    existing = await find_by_email(db, body.email)
+    if existing is not None:
+        raise AuthError("A user with that email already exists")
+
+    invitation = await find_pending_invitation(db, body.email)
+    if invitation is None:
+        bootstrap_email = config.auth.bootstrap_admin_email if config.auth else None
+        if bootstrap_email and body.email == bootstrap_email:
+            role = UserRole.ADMIN
+        else:
+            raise NotInvited(body.email)
+    else:
+        role = invitation.role
+        invitation.accepted_at = datetime.now(UTC)
+
+    user = UserModel(name=body.name, email=body.email, role=role)
+    db.add(user)
+    await db.flush()
+
+    db.add(
+        UserPasswordModel(
+            user_id=user.id,
+            password_hash=hash_password(body.password),
+        )
+    )
+    await db.flush()
+    return user
+
+
+async def login_with_password(db: AsyncSession, email: str, password: str) -> UserModel:
+    """Verify email + password and return the user.
+
+    Raises ``InvalidCredentials`` if the user doesn't exist, has no password
+    set, or the password doesn't match.
+    """
+    user = await find_by_email(db, email)
+    if user is None:
+        raise InvalidCredentials()
+    if not user.is_active:
+        raise InvalidCredentials("User is inactive")
+
+    result = await db.execute(
+        select(UserPasswordModel).where(UserPasswordModel.user_id == user.id)
+    )
+    pwd = result.scalar_one_or_none()
+    if pwd is None or not verify_password(password, pwd.password_hash):
+        raise InvalidCredentials()
     return user

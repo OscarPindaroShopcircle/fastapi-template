@@ -36,6 +36,31 @@ class RefreshRequest(AppBaseModelStripped):
     refresh_token: Annotated[str, Field(description="A valid refresh token")]
 
 
+class LoginRequest(AppBaseModelStripped):
+    """Request body for ``POST /auth/login`` (password-based)."""
+
+    email: Annotated[str, Field(description="User email address")]
+    password: Annotated[str, Field(description="User password")]
+
+
+class RegisterRequest(AppBaseModelStripped):
+    """Request body for ``POST /auth/register`` (password-based).
+
+    Registration is gated by a pending invitation or the bootstrap admin
+    email — no open self-registration.
+    """
+
+    name: Annotated[
+        str,
+        Field(min_length=1, max_length=255, description="User's display name"),
+    ]
+    email: Annotated[str, Field(description="User email address")]
+    password: Annotated[
+        str,
+        Field(min_length=8, description="User password (min 8 chars)"),
+    ]
+
+
 class InvitationCreate(AppBaseModelStripped):
     """Input for creating an invitation."""
 

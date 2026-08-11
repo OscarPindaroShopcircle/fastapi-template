@@ -11,9 +11,14 @@ from ...config import AppConfig, get_app_config
 from ...db.models.core.enums import UserRole
 from ...dependencies import get_db_session
 from ...db.models import UserModel
-from ..exceptions import AuthError, InvalidToken
-from ..schemas import RefreshRequest, TokenResponse
-from ..service import find_pending_invitation, login_with_provider
+from ..exceptions import AuthError, InvalidCredentials, InvalidToken
+from ..schemas import LoginRequest, RefreshRequest, RegisterRequest, TokenResponse
+from ..service import (
+    find_pending_invitation,
+    login_with_password,
+    login_with_provider,
+    register_with_password,
+)
 from ..sso import build_google_sso
 from ..tokens import (
     create_access_token,
@@ -147,6 +152,62 @@ async def auth_callback(
     # Cookies are set on the injected Response (FastAPI merges them onto the
     # returned pydantic model); the HTML branch above sets them on the
     # HTMLResponse directly because a returned Response object is used as-is.
+    set_auth_cookies(response, access_token, refresh_token, config)
+    return TokenResponse(
+        access_token=access_token,
+        refresh_token=refresh_token,
+        token_type="bearer",
+    )
+
+
+@router.post(
+    "/auth/login",
+    response_model=TokenResponse,
+    responses={
+        200: {"description": "Login successful — JWT tokens returned"},
+        401: {"description": "Invalid email or password"},
+    },
+)
+async def auth_login(
+    body: LoginRequest,
+    response: Response,
+    db: AsyncSession = Depends(get_db_session),
+    config: AppConfig = Depends(get_app_config),
+):
+    """Password-based login — verify credentials, issue JWT tokens."""
+    user = await login_with_password(db, body.email, body.password)
+    access_token = create_access_token(user.id, user.email, user.role)
+    refresh_token = create_refresh_token(user.id)
+    set_auth_cookies(response, access_token, refresh_token, config)
+    return TokenResponse(
+        access_token=access_token,
+        refresh_token=refresh_token,
+        token_type="bearer",
+    )
+
+
+@router.post(
+    "/auth/register",
+    response_model=TokenResponse,
+    responses={
+        200: {"description": "Registration successful — JWT tokens returned"},
+        401: {"description": "Email is not invited"},
+        409: {"description": "A user with that email already exists"},
+    },
+)
+async def auth_register(
+    body: RegisterRequest,
+    response: Response,
+    db: AsyncSession = Depends(get_db_session),
+    config: AppConfig = Depends(get_app_config),
+):
+    """Password-based registration — create a user, issue JWT tokens.
+
+    Gated by a pending invitation or the bootstrap admin email.
+    """
+    user = await register_with_password(db, body, config)
+    access_token = create_access_token(user.id, user.email, user.role)
+    refresh_token = create_refresh_token(user.id)
     set_auth_cookies(response, access_token, refresh_token, config)
     return TokenResponse(
         access_token=access_token,
