@@ -68,15 +68,6 @@
   color: var(--clr-accent-hover);
 }
 
-.login-error {
-  background: var(--status-danger-bg);
-  color: var(--status-danger);
-  padding: var(--sp-2) var(--sp-3);
-  border-radius: var(--radius-md);
-  font-size: var(--text-sm);
-  margin-bottom: var(--sp-4);
-}
-
 .login-divider {
   display: flex;
   align-items: center;

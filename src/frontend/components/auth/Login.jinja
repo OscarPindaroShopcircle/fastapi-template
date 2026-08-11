@@ -8,7 +8,7 @@
       </div>
 
       {% if error %}
-      <div class="login-error">{{ error }}</div>
+      <common.Alert variant="danger">{{ error }}</common.Alert>
       {% endif %}
 
       {% if mode == "register" %}
