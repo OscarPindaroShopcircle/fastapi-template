@@ -1,0 +1,136 @@
+{#def users, current_user=None #}
+<layout.Page title="Components" current_user={{ current_user }} active="home">
+  <div class="showcase">
+    <h1>Component Showcase</h1>
+
+    <section class="showcase-section">
+      <h2>Buttons</h2>
+      <div class="showcase-row">
+        <common.Button variant="primary" size="sm">Small Primary</common.Button>
+        <common.Button variant="primary" size="md">Primary</common.Button>
+        <common.Button variant="primary" size="lg">Large Primary</common.Button>
+      </div>
+      <div class="showcase-row">
+        <common.Button variant="secondary" size="md">Secondary</common.Button>
+        <common.Button variant="danger" size="md">Danger</common.Button>
+        <common.Button variant="primary" size="md" disabled>Disabled</common.Button>
+      </div>
+      <div class="showcase-row">
+        <common.Button variant="primary" size="md" href="/admin">
+          <common.Icon name="arrow-right" size=16 />
+          Link Button
+        </common.Button>
+      </div>
+    </section>
+
+    <section class="showcase-section">
+      <h2>Pills</h2>
+      <div class="showcase-row">
+        <common.Pill variant="neutral">Neutral</common.Pill>
+        <common.Pill variant="good">Good</common.Pill>
+        <common.Pill variant="bad">Bad</common.Pill>
+        <common.Pill variant="accent">Accent</common.Pill>
+        <common.Pill variant="pending">Pending</common.Pill>
+        <common.Pill variant="processing">Processing</common.Pill>
+      </div>
+    </section>
+
+    <section class="showcase-section">
+      <h2>Icons</h2>
+      <div class="showcase-row">
+        <common.Icon name="home" size=24 />
+        <common.Icon name="shield" size=24 />
+        <common.Icon name="user-plus" size=24 />
+        <common.Icon name="arrow-right" size=24 />
+        <common.Icon name="panel-left-close" size=24 />
+        <common.Icon name="check" size=24 />
+        <common.Icon name="x" size=24 />
+        <common.Icon name="mail" size=24 />
+      </div>
+    </section>
+
+    <section class="showcase-section">
+      <h2>Colors</h2>
+
+      <h3 class="showcase-subtitle">Brand</h3>
+      <div class="showcase-row">
+        <div class="showcase-swatch" style="background: var(--clr-nav);">nav</div>
+        <div class="showcase-swatch" style="background: var(--clr-nav-text);">nav-text</div>
+        <div class="showcase-swatch" style="background: var(--clr-nav-link);">nav-link</div>
+        <div class="showcase-swatch" style="background: var(--clr-nav-accent);">nav-accent</div>
+        <div class="showcase-swatch" style="background: var(--clr-accent);">accent</div>
+        <div class="showcase-swatch" style="background: var(--clr-accent-hover);">accent-hover</div>
+        <div class="showcase-swatch" style="background: var(--clr-accent-light);">accent-light</div>
+      </div>
+
+      <h3 class="showcase-subtitle">Surface</h3>
+      <div class="showcase-row">
+        <div class="showcase-swatch" style="background: var(--clr-bg);">bg</div>
+        <div class="showcase-swatch" style="background: var(--clr-surface);">surface</div>
+        <div class="showcase-swatch" style="background: var(--clr-border);">border</div>
+        <div class="showcase-swatch" style="background: var(--clr-border-light);">border-light</div>
+        <div class="showcase-swatch" style="background: var(--clr-text);">text</div>
+        <div class="showcase-swatch" style="background: var(--clr-text-muted);">text-muted</div>
+        <div class="showcase-swatch" style="background: var(--clr-text-faint);">text-faint</div>
+      </div>
+
+      <h3 class="showcase-subtitle">Status</h3>
+      <div class="showcase-row">
+        <div class="showcase-swatch" style="background: var(--clr-good);">good</div>
+        <div class="showcase-swatch" style="background: var(--clr-good-bg); color: var(--clr-good);">good-bg</div>
+        <div class="showcase-swatch" style="background: var(--clr-bad);">bad</div>
+        <div class="showcase-swatch" style="background: var(--clr-bad-bg); color: var(--clr-bad);">bad-bg</div>
+        <div class="showcase-swatch" style="background: var(--clr-pending);">pending</div>
+        <div class="showcase-swatch" style="background: var(--clr-pending-bg); color: var(--clr-pending);">pending-bg</div>
+        <div class="showcase-swatch" style="background: var(--clr-processing);">processing</div>
+        <div class="showcase-swatch" style="background: var(--clr-processing-bg); color: var(--clr-processing);">processing-bg</div>
+      </div>
+      <div class="showcase-row">
+        <common.Pill variant="good">Active</common.Pill>
+        <common.Pill variant="bad">Inactive</common.Pill>
+        <common.Pill variant="pending">Pending</common.Pill>
+        <common.Pill variant="processing">Processing</common.Pill>
+        <common.Pill variant="neutral">Neutral</common.Pill>
+        <common.Pill variant="accent">Admin</common.Pill>
+      </div>
+
+      <h3 class="showcase-subtitle">Saturated</h3>
+      <div class="showcase-row">
+        <div class="showcase-swatch" style="background: var(--color-0);">0</div>
+        <div class="showcase-swatch" style="background: var(--color-1);">1</div>
+        <div class="showcase-swatch" style="background: var(--color-2);">2</div>
+        <div class="showcase-swatch" style="background: var(--color-3);">3</div>
+        <div class="showcase-swatch" style="background: var(--color-4);">4</div>
+        <div class="showcase-swatch" style="background: var(--color-5);">5</div>
+        <div class="showcase-swatch" style="background: var(--color-6);">6</div>
+        <div class="showcase-swatch" style="background: var(--color-7);">7</div>
+      </div>
+    </section>
+
+    <section class="showcase-section">
+      <h2>Table</h2>
+      <common.Table headers={{ ["Name", "Email", "Role", "Status"] }}>
+        {% for user in users %}
+        <tr>
+          <td>{{ user.name }}</td>
+          <td>{{ user.email }}</td>
+          <td>
+            {% if user.role == 'admin' %}
+            <common.Pill variant="accent">Admin</common.Pill>
+            {% else %}
+            <common.Pill variant="neutral">Member</common.Pill>
+            {% endif %}
+          </td>
+          <td>
+            {% if user.is_active %}
+            <common.Pill variant="good">Active</common.Pill>
+            {% else %}
+            <common.Pill variant="bad">Inactive</common.Pill>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </common.Table>
+    </section>
+  </div>
+</layout.Page>

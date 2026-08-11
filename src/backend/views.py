@@ -76,3 +76,38 @@ async def admin_dashboard(catalog=Depends(get_catalog_dep)):
         invitations=mock_invitations,
         current_user=mock_user,
     )
+
+
+@router.get("/components", response_class=HTMLResponse)
+async def showcase(catalog=Depends(get_catalog_dep)):
+    """Component showcase — living style guide."""
+    mock_user = {
+        "name": "Oscar",
+        "email": "oscar@circeus.com",
+        "role": "admin",
+    }
+    mock_users = [
+        {
+            "name": "Oscar",
+            "email": "oscar@circeus.com",
+            "role": "admin",
+            "is_active": True,
+        },
+        {
+            "name": "Alice",
+            "email": "alice@circeus.com",
+            "role": "member",
+            "is_active": True,
+        },
+        {
+            "name": "Bob",
+            "email": "bob@circeus.com",
+            "role": "member",
+            "is_active": False,
+        },
+    ]
+    return catalog.render(
+        "showcase.Showcase",
+        users=mock_users,
+        current_user=mock_user,
+    )

@@ -9,8 +9,9 @@
   white-space: nowrap;
 }
 
-.pill-neutral  { background: var(--clr-pending-bg); color: var(--clr-pending); }
-.pill-pending  { background: var(--clr-pending-bg); color: var(--clr-pending); }
-.pill-good     { background: var(--clr-good-bg);    color: var(--clr-good); }
-.pill-bad      { background: var(--clr-bad-bg);     color: var(--clr-bad); }
-.pill-accent   { background: var(--clr-accent-light); color: var(--clr-accent); }
+.pill-neutral   { background: var(--clr-pending-bg); color: var(--clr-pending); }
+.pill-pending   { background: var(--clr-pending-bg); color: var(--clr-pending); }
+.pill-processing { background: var(--clr-processing-bg); color: var(--clr-processing); }
+.pill-good      { background: var(--clr-good-bg);    color: var(--clr-good); }
+.pill-bad       { background: var(--clr-bad-bg);     color: var(--clr-bad); }
+.pill-accent    { background: var(--clr-accent-light); color: var(--clr-accent); }

@@ -31,11 +31,11 @@
   --clr-good-bg:      #e6f4ec;
   --clr-bad:          #b83c30;
   --clr-bad-bg:       #fce9e7;
-  --clr-pending-bg:   #f0f0ee;
-  --clr-pending:      #7a7a76;
-  --clr-processing:   #b07a20;
-  --clr-processing-bg:#fdf3e3;
-  --clr-processing-hover: #f5e6c8;
+  --clr-pending:      #5f5e5a;
+  --clr-pending-bg:   #f1eee7;
+  --clr-processing:   #185fa5;
+  --clr-processing-bg:#e6f1fb;
+  --clr-processing-hover: #d3e6f7;
 
   /* Spacing */
   --sp-1: 0.25rem;  --sp-2: 0.5rem;   --sp-3: 0.75rem;
@@ -60,6 +60,16 @@
 
   /* Layout */
   --sidebar-width: 240px;
+
+  /* Saturated colors — assigned by index */
+  --color-0: #4caf6e;
+  --color-1: #e85d4a;
+  --color-2: #378ade;
+  --color-3: #9b59d0;
+  --color-4: #e87b3d;
+  --color-5: #d94a8a;
+  --color-6: #5f5e5a;
+  --color-7: #2d7a4f;
 }
 
 /* ---------- Reset ---------- */
