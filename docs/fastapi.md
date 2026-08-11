@@ -31,6 +31,63 @@ src/backend/
 | SQLAlchemy Base & mixins | `src/backend/db/db.py`, `db/mixins.py` |
 | App configuration | `src/backend/config.py` |
 
+## Module Boundaries: generic core vs. application layer
+
+**A core module never learns about the application that composes it.** The core
+(files, tasks, users, …) stays generic and reusable; the *application layer*
+owns the question "how does *this* app use it". Every cross-cutting concern in
+this codebase is split that way, and new ones must be too.
+
+The worked example is files. `FileModel` is a generic entity — a file can belong
+to a project, a user profile, or anything added later — so it carries **no
+owner foreign key**, and `files.FileRepository` never mentions one. "Which files
+belong to X" lives in a support table with its own dignity (e.g. an
+`...FileModel` join table in an app that has owners), read through its own
+repository in the application layer. The support table represents the
+*relationship*; the core model represents the *thing*.
+
+Concretely: if this app grew a `projects` feature, the project side would be a
+`ProjectFileModel` join table plus a `ProjectFileRepository.list_for_project`
+that joins through it — all in `projects/`. Nothing in `files/` changes: no
+`project_id` on `FileModel`, no project-aware method on `FileRepository`. The
+join and the project-named query are the smell test — they mention the project
+concept, so they live in the application layer, not the core.
+
+The same split applies to every concern that has both a generic core and an
+application-shaped view of it:
+
+| Concern | Core side (`db/models/core/`, `<domain>/repository.py`) | Application side (app-specific repository / service) |
+|---|---|---|
+| Files | `files.FileRepository` (`FileModel`) | app-specific `...FileRepository` (`...FileModel` join table) |
+| Tasks | `tasks.TaskRepository` (`TaskModel`) | app-specific `...TaskRepository` (`...TaskModel` join table) |
+| Any owned entity | generic `<domain>.<Domain>Repository` | app-specific repository that owns the relationship |
+
+### The smell test
+
+If a method's `GROUP BY`, its join, or its name mentions an application-specific
+concept (a particular owner, a particular use-case), it does not belong in a
+core module. Grouping by an intrinsic property of the entity belongs in the
+core; grouping by *which app-owned collection it falls into* does not — even
+when both aggregate exactly the same rows.
+
+### What a core module *may* do
+
+- **Take an owner id as an optional plain column filter.** When a row physically
+  carries an owner FK, filtering on it is not a join and does not require
+  application knowledge. The core repository may accept it as a plain filter
+  argument for precisely this reason.
+- **Expose a builder for the application layer to compose over.** Rather than
+  duplicating a multi-table union, the core repository can expose its query
+  builder publicly, and the application-layer repository builds its
+  app-shaped `GROUP BY` on top of it. The aggregation mechanics stay with the
+  tables; the app-shaped decision stays in the application layer.
+- **Share a leaf module with the service layer.** A leaf module (constants,
+  enums, archetype maps, …) may be imported by both repositories and services
+  to avoid a cycle — a repository must never import a feature's `service`.
+
+Docstrings on each class above state their half of the split; keep them accurate
+when you add a method.
+
 ## Routes (routes.py)
 
 ### Router Setup
