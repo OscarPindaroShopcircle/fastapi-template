@@ -11,6 +11,7 @@ something it calls) and there is nothing else to do.
 
 from __future__ import annotations
 
+import zlib
 from datetime import UTC, datetime
 from functools import lru_cache
 
@@ -56,6 +57,17 @@ def _metric_value(value: float | None) -> str:
     return f"{value * 100:.2f}%"
 
 
+def _cat_index(value: str, n: int = 8) -> int:
+    """Jinja filter: deterministic category index from a string.
+
+    ``{{ user.name | cat_index }}`` -> ``3``
+    Uses ``zlib.crc32`` so the same name always maps to the same index
+    across process restarts. Used by the Avatar component to pick a
+    ``--cat-N`` color without the backend knowing about colors.
+    """
+    return zlib.crc32((value or "").strip().lower().encode("utf-8")) % n
+
+
 @lru_cache(maxsize=1)
 def _build_templates(templates_dir: str):
     templates = Jinja2Templates(directory=templates_dir)
@@ -76,4 +88,5 @@ def get_catalog(components_dir: str):
     """
     catalog = jinjax.Catalog()
     catalog.add_folder(components_dir)
+    catalog.jinja_env.filters["cat_index"] = _cat_index
     return catalog
