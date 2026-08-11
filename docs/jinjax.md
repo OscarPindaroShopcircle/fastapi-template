@@ -409,6 +409,75 @@ document.addEventListener("click", (event) => {
 })
 ```
 
+### Preloading assets for htmx-loaded components
+
+JinjaX only collects CSS/JS for components rendered during the initial page render (`catalog.render_assets()`). Components loaded later via htmx won't have their assets included on the page.
+
+Use `{#css ... #}` on the page that triggers the htmx load to preload the assets the dynamically loaded component will need:
+
+```jinja
+{#def users, invitations #}
+{#css common/Dialog.css, common/Alert.css, common/Field.css #}
+<layout.Page>
+  <common.Button hx-get="/admin/users/invite" hx-target="#invite-dialog">
+    Invite User
+  </common.Button>
+  <div id="invite-dialog"></div>
+</layout.Page>
+```
+
+### Dynamic values in htmx attributes
+
+`{{ inv.id }}` inside a JinjaX component attribute is treated as a literal string, not evaluated. Use the `:` prefix to pass an expression:
+
+```jinja
+{# Wrong — renders hx-delete="/admin/users/invitations/{{ inv.id }}" literally #}
+<common.Button hx-delete="/admin/users/invitations/{{ inv.id }}" />
+
+{# Correct — expression syntax evaluates the variable #}
+<common.Button :hx-delete="'/admin/users/invitations/' + inv.id|string" />
+```
+
+### Opening native `<dialog>` after htmx swap
+
+The `open` attribute creates a non-modal dialog (no centering, no backdrop). Use `showModal()` in an `hx-on::after-request` handler after the htmx swap completes:
+
+```jinja
+<common.Button
+  hx-get="/admin/users/invite"
+  hx-target="#invite-dialog"
+  hx-swap="innerHTML"
+  hx-on::after-request="if(event.detail.successful) document.querySelector('#invite-dialog dialog').showModal()">
+  Invite User
+</common.Button>
+```
+
+### Lucide icons and htmx
+
+Lucide works by scanning the DOM for `<i data-lucide="icon-name">` elements and replacing them with inline SVGs when `lucide.createIcons()` is called. This only runs once on page load — icons inserted via htmx won't render until `lucide.createIcons()` is called again.
+
+Call `lucide.createIcons()` after htmx swaps that insert icons:
+
+```jinja
+hx-on::after-request="if(event.detail.successful) { document.querySelector('#invite-dialog dialog').showModal(); lucide.createIcons(); }"
+```
+
+### Jinja filters returning HTML
+
+Filters that return HTML must use `markupsafe.Markup` to avoid auto-escaping:
+
+```python
+from markupsafe import Markup
+
+def _time(value) -> str:
+    if value is None:
+        return "—"
+    iso = value.isoformat()
+    return Markup(f'<time datetime="{iso}">{iso}</time>')
+```
+
+Usage in templates: `{{ inv.expires_at | time }}`.
+
 ## Middleware and serving assets
 
 JinjaX includes middleware for serving component assets in some WSGI integrations. This is mainly relevant to Flask and other WSGI applications. ASGI frameworks may instead serve assets through their normal static-file mechanisms.
@@ -495,15 +564,16 @@ A bare unquoted value like `size=32` is **not** a valid expression — it is tre
 
 ```
 src/frontend/components/
-├── common/        # Reusable M3 primitives (Button, Card, Field, Icon, Pill, Table, Avatar)
+├── common/        # Reusable M3 primitives (Button, Card, Field, Icon, Pill, Table, Avatar, Alert, Divider, Dialog, ConfirmDialog)
 ├── layout/        # Page shells (BlankPage, Page, Sidebar)
-├── auth/          # Auth-specific pages (Login)
 └── pages/         # Full pages composed from common + layout
-    ├── admin/
+    ├── admin/     # Admin dashboard, tables, invite/revoke dialogs
+    ├── home/
+    ├── login/
     └── showcase/  # The living style guide at /components
 ```
 
-Component names are dot-separated by folder: `common.Button`, `layout.Page`, `auth.Login`, `pages.showcase.Showcase`.
+Component names are dot-separated by folder: `common.Button`, `layout.Page`, `pages.admin.AdminDashboard`, `pages.showcase.Showcase`.
 
 ### Component anatomy
 
@@ -555,5 +625,8 @@ Material Design 3 (M3) is the reference. Component variants and states follow th
 - **Text field** — outlined / filled, with error and supporting-text states
 - **Button** — primary / secondary / danger, sizes sm / md / lg
 - **Pill** — success / danger / warning / info / neutral / accent / role-*
+- **Alert** — danger / warning / info / success
+- **Divider** — full-width separator
+- **Dialog** — native `<dialog>` opened with `showModal()`, M3 modal styling
 
 When adding a new component, check the M3 spec first, then map it to the existing tokens.

@@ -21,27 +21,52 @@ fastapi-template/
 │   ├── fastapi.md             # FastAPI conventions
 │   ├── schemas.md             # Pydantic schema patterns
 │   ├── sqlalchemy.md          # SQLAlchemy model conventions
+│   ├── jinjax.md              # JinjaX component system and conventions
+│   ├── testing.md             # Testing strategy
+│   ├── user.md                # User and auth model
+│   ├── clients.md             # External service client patterns
+│   ├── database_migrations.md # Migration workflows and security model
 │   └── new_feature_workflow.md # Step-by-step feature creation guide
 ├── src/
-│   └── backend/               # Main application package
-│       ├── db/                # Database layer
-│       │   ├── db.py         # Base class and DatabaseManager
-│       │   ├── mixins.py     # Reusable model mixins
-│       │   ├── models/       # SQLAlchemy models
-│       │   └── init_db.py    # Database initialization
-│       ├── agents/             # AI agents and agentic workflows
-│       ├── clients/            # External service integrations
-│       ├── users/             # Example feature module
-│       │   ├── routes.py     # API endpoints
-│       │   ├── schemas.py    # Pydantic models
-│       │   ├── service.py    # Business logic
-│       │   ├── repository.py # Data access layer
-│       │   └── exceptions.py # Feature-specific exceptions
-│       ├── config.py          # Application configuration
-│       ├── dependencies.py    # Shared dependencies (e.g., get_db_session)
-│       ├── schemas.py         # Base Pydantic models
-│       └── server.py          # FastAPI app creation
-├── templates/                  # Template files
+│   ├── backend/               # Main application package
+│   │   ├── auth/              # Authentication: SSO, JWT, invitations, password
+│   │   │   ├── routes/       # API routes (auth, invitations)
+│   │   │   ├── service.py    # Auth business logic
+│   │   │   ├── schemas.py    # Auth Pydantic models
+│   │   │   ├── dependencies.py # get_current_user, get_current_admin_user
+│   │   │   ├── exceptions.py  # Auth-specific HTTP exceptions
+│   │   │   ├── tokens.py      # JWT creation/verification
+│   │   │   ├── password.py    # Password hashing/verification
+│   │   │   └── sso.py         # Google OAuth/OpenID
+│   │   ├── users/             # User management feature
+│   │   │   ├── routes.py     # API endpoints
+│   │   │   ├── views.py      # HTML/htmx endpoints (admin pages)
+│   │   │   ├── schemas.py    # Pydantic models
+│   │   │   ├── service.py    # Business logic
+│   │   │   ├── repository.py # Data access layer
+│   │   │   └── exceptions.py # Feature-specific exceptions
+│   │   ├── showcase/          # Component showcase (living style guide)
+│   │   ├── agents/            # AI agents and agentic workflows
+│   │   ├── clients/           # External service integrations
+│   │   ├── tasks/             # Async task management
+│   │   ├── files/             # File storage models
+│   │   ├── db/                # Database layer
+│   │   │   ├── db.py         # Base class and DatabaseManager
+│   │   │   ├── mixins.py     # Reusable model mixins
+│   │   │   ├── models/       # SQLAlchemy models
+│   │   │   └── init_db.py    # Database initialization
+│   │   ├── config.py          # Application configuration
+│   │   ├── dependencies.py    # Shared dependencies (e.g., get_db_session)
+│   │   ├── jinja.py           # JinjaX catalog + Jinja filters
+│   │   ├── views.py           # Top-level HTML routes (home, login)
+│   │   ├── schemas.py         # Base Pydantic models
+│   │   └── server.py          # FastAPI app creation
+│   └── frontend/              # JinjaX components and static assets
+│       ├── components/        # Server-rendered UI components
+│       │   ├── common/       # Reusable M3 primitives (Button, Card, Field, Dialog, …)
+│       │   ├── layout/       # Page shells (BlankPage, Page, Sidebar)
+│       │   └── pages/        # Full pages (admin, home, login, showcase)
+│       └── static/           # CSS tokens, JS utilities, icons
 ├── config.yaml                 # Application configuration
 ├── pyproject.toml             # Project dependencies
 └── alembic.ini                # Alembic configuration
@@ -50,13 +75,24 @@ fastapi-template/
 ### Feature Organization
 
 Features are organized into self-contained modules under `src/backend/`. Each feature contains:
-- `routes.py` - API endpoints
+- `routes.py` - JSON API endpoints
+- `views.py` - HTML/htmx endpoints (server-rendered pages and fragments)
 - `schemas.py` - Pydantic models for request/response validation
-- `service.py` - Business logic
+- `service.py` - Business logic (all SQLAlchemy queries live here, never in routes/views)
 - `repository.py` (optional) - Object-oriented data access layer
 - `exceptions.py` - Feature-specific HTTP exceptions
 
-The `src/backend/` structure allows for future expansion with additional modules like a Streamlit frontend or separate frontend application.
+API routes (`routes.py`) and HTML views (`views.py`) share the same service layer, ensuring functionality parity between JSON and htmx interfaces.
+
+### Frontend
+
+The frontend uses [JinjaX](https://jinjax.scaletti.dev/) for server-rendered components and [htmx](https://htmx.org/) for dynamic interactions — no client-side framework. Components live in `src/frontend/components/` and follow Material Design 3-inspired patterns with CSS custom-property design tokens.
+
+- **`common/`** — Reusable primitives: Button, Card, Field, Dialog, Alert, Divider, Pill, Table, Icon, Avatar
+- **`layout/`** — Page shells: BlankPage (bare HTML), Page (with sidebar), Sidebar (M3 navigation drawer)
+- **`pages/`** — Full pages composed from common + layout: admin dashboard, home, login, showcase
+
+The showcase at `/components` is the living style guide — every `common.*` component must be added there with all variants visible. See `docs/jinjax.md` for component conventions, htmx patterns, and asset loading rules.
 
 ## Documentation
 
@@ -65,7 +101,11 @@ The `docs/` folder contains comprehensive documentation for developers and LLMs:
 - **`fastapi.md`** - FastAPI conventions, route patterns, and service layer guidelines
 - **`schemas.md`** - Pydantic schema conventions and validation patterns
 - **`sqlalchemy.md`** - SQLAlchemy model conventions and available mixins
+- **`jinjax.md`** - JinjaX component system, htmx patterns, and frontend conventions
+- **`testing.md`** - Testing strategy and test types
+- **`user.md`** - User model, roles, and authentication flow
 - **`clients.md`** - External service client patterns and best practices
+- **`database_migrations.md`** - Database architecture, security model, and migration workflows
 - **`new_feature_workflow.md`** - Complete checklist for adding new features
 
 Documentation follows the same modular structure as the backend code.
