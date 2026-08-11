@@ -40,6 +40,9 @@ dev = [
 ]
 
 
+[tool.ruff.lint]
+select = ["E402", "PLC0415"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"

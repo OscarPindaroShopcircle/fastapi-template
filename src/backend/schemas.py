@@ -50,6 +50,32 @@ class AppBaseModel(BaseModel):
         return jsonable_encoder(self.model_dump())
 
 
+class AppBaseModelStripped(BaseModel):
+    """Base model that keeps snake_case JSON keys (no camelCase alias).
+
+    Same validation/whitespace-stripping as ``AppBaseModel`` but without the
+    ``to_camel`` alias generator — use this for schemas whose field names are
+    already the exact JSON keys clients expect (e.g. ``access_token``,
+    ``refresh_token``).
+    """
+
+    model_config = ConfigDict(
+        populate_by_name=True,
+        validate_default=True,
+        validate_assignment=True,
+        use_enum_values=True,
+        str_strip_whitespace=True,
+        from_attributes=True,
+    )
+
+    @field_serializer("created_at", "updated_at", mode="plain", check_fields=False)
+    @classmethod
+    def _serialize_datetime(cls, v: datetime | None) -> str | None:
+        if v is None:
+            return None
+        return datetime_to_gmt_str(v)
+
+
 class TimestampMixin(BaseModel):
     """Pydantic mixin mirroring the SQLAlchemy ``TimestampMixin``.
 
