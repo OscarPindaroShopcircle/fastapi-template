@@ -5,18 +5,18 @@
     <td>{{ inv.email }}</td>
     <td>
       {% if inv.role == 'admin' %}
-      <common.Pill variant="accent">Admin</common.Pill>
+      <common.Pill variant="role-admin">Admin</common.Pill>
       {% else %}
-      <common.Pill variant="neutral">Member</common.Pill>
+      <common.Pill variant="role-member">Member</common.Pill>
       {% endif %}
     </td>
     <td>{{ inv.invited_by_name or inv.invited_by }}</td>
     <td>{{ inv.expires_at }}</td>
     <td>
       {% if inv.accepted_at %}
-      <common.Pill variant="good">Accepted</common.Pill>
+      <common.Pill variant="success">Accepted</common.Pill>
       {% else %}
-      <common.Pill variant="pending">Pending</common.Pill>
+      <common.Pill variant="warning">Pending</common.Pill>
       {% endif %}
     </td>
   </tr>

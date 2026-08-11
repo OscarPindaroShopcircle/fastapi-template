@@ -1,7 +1,93 @@
 {#def users, current_user=None #}
-<layout.Page title="Components" current_user={{ current_user }} active="home">
+<layout.Page title="Design Kit" current_user={{ current_user }} active="home">
   <div class="showcase">
-    <h1>Component Showcase</h1>
+    <h1>Design Kit</h1>
+    <p class="showcase-subtitle">Every value reads from tokens. No raw hex or px in components.</p>
+
+    <section class="showcase-section">
+      <h2>Typography</h2>
+      <p class="showcase-note">7 sizes, 3 weights, 2 line-heights.</p>
+      <div class="showcase-type-row"><span class="showcase-label">text-3xl</span><span style="font-size: var(--text-3xl); font-weight: var(--weight-bold);">Aa</span></div>
+      <div class="showcase-type-row"><span class="showcase-label">text-2xl</span><span style="font-size: var(--text-2xl); font-weight: var(--weight-bold);">Aa</span></div>
+      <div class="showcase-type-row"><span class="showcase-label">text-xl</span><span style="font-size: var(--text-xl); font-weight: var(--weight-bold);">Aa</span></div>
+      <div class="showcase-type-row"><span class="showcase-label">text-lg</span><span style="font-size: var(--text-lg); font-weight: var(--weight-medium);">Aa</span></div>
+      <div class="showcase-type-row"><span class="showcase-label">text-base</span><span style="font-size: var(--text-base);">Aa</span></div>
+      <div class="showcase-type-row"><span class="showcase-label">text-sm</span><span style="font-size: var(--text-sm);">Aa</span></div>
+      <div class="showcase-type-row"><span class="showcase-label">text-xs</span><span style="font-size: var(--text-xs); color: var(--clr-text-muted);">Aa</span></div>
+    </section>
+
+    <section class="showcase-section">
+      <h2>Spacing</h2>
+      <p class="showcase-note">4px base unit.</p>
+      <div class="showcase-space-row"><span class="showcase-label">sp-1</span><div class="showcase-space-swatch" style="width: var(--sp-1);"></div></div>
+      <div class="showcase-space-row"><span class="showcase-label">sp-2</span><div class="showcase-space-swatch" style="width: var(--sp-2);"></div></div>
+      <div class="showcase-space-row"><span class="showcase-label">sp-4</span><div class="showcase-space-swatch" style="width: var(--sp-4);"></div></div>
+      <div class="showcase-space-row"><span class="showcase-label">sp-6</span><div class="showcase-space-swatch" style="width: var(--sp-6);"></div></div>
+      <div class="showcase-space-row"><span class="showcase-label">sp-8</span><div class="showcase-space-swatch" style="width: var(--sp-8);"></div></div>
+      <div class="showcase-space-row"><span class="showcase-label">sp-12</span><div class="showcase-space-swatch" style="width: var(--sp-12);"></div></div>
+    </section>
+
+    <section class="showcase-section">
+      <h2>Radius and shadow</h2>
+      <div class="showcase-grid-2">
+        <div class="showcase-row">
+          <div class="showcase-demo-box" style="border-radius: var(--radius-sm);">sm</div>
+          <div class="showcase-demo-box" style="border-radius: var(--radius-md);">md</div>
+          <div class="showcase-demo-box" style="border-radius: var(--radius-lg);">lg</div>
+          <div class="showcase-demo-box" style="border-radius: var(--radius-full);">full</div>
+        </div>
+        <div class="showcase-row">
+          <div class="showcase-demo-box" style="box-shadow: var(--shadow-sm); border-color: transparent;">sm</div>
+          <div class="showcase-demo-box" style="box-shadow: var(--shadow-md); border-color: transparent;">md</div>
+          <div class="showcase-demo-box" style="box-shadow: var(--shadow-lg); border-color: transparent;">lg</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="showcase-section">
+      <h2>Status tokens</h2>
+      <p class="showcase-note">Fixed vocabulary — success, danger, warning, info, neutral.</p>
+      <div class="showcase-row">
+        <common.Pill variant="success">Success</common.Pill>
+        <common.Pill variant="danger">Danger</common.Pill>
+        <common.Pill variant="warning">Warning</common.Pill>
+        <common.Pill variant="info">Info</common.Pill>
+        <common.Pill variant="neutral">Neutral</common.Pill>
+        <common.Pill variant="accent">Accent</common.Pill>
+      </div>
+      <div class="showcase-row" style="margin-top: var(--sp-3);">
+        <div class="showcase-swatch" style="background: var(--status-success);">success</div>
+        <div class="showcase-swatch" style="background: var(--status-danger);">danger</div>
+        <div class="showcase-swatch" style="background: var(--status-warning); color: var(--clr-text);">warning</div>
+        <div class="showcase-swatch" style="background: var(--status-info);">info</div>
+        <div class="showcase-swatch" style="background: var(--status-neutral);">neutral</div>
+      </div>
+    </section>
+
+    <section class="showcase-section">
+      <h2>Role tokens</h2>
+      <p class="showcase-note">Fixed, meaningful set — Admin, Dev, Member. Distinct from status and category.</p>
+      <div class="showcase-row">
+        <common.Pill variant="role-admin">Admin</common.Pill>
+        <common.Pill variant="role-dev">Dev</common.Pill>
+        <common.Pill variant="role-member">Member</common.Pill>
+      </div>
+    </section>
+
+    <section class="showcase-section">
+      <h2>Category tokens</h2>
+      <p class="showcase-note">One array. Every entry same visual weight, never overlaps a status hue.</p>
+      <div class="showcase-row">
+        <div class="showcase-swatch" style="background: var(--cat-0);">0</div>
+        <div class="showcase-swatch" style="background: var(--cat-1);">1</div>
+        <div class="showcase-swatch" style="background: var(--cat-2);">2</div>
+        <div class="showcase-swatch" style="background: var(--cat-3);">3</div>
+        <div class="showcase-swatch" style="background: var(--cat-4);">4</div>
+        <div class="showcase-swatch" style="background: var(--cat-5);">5</div>
+        <div class="showcase-swatch" style="background: var(--cat-6);">6</div>
+        <div class="showcase-swatch" style="background: var(--cat-7);">7</div>
+      </div>
+    </section>
 
     <section class="showcase-section">
       <h2>Buttons</h2>
@@ -14,24 +100,6 @@
         <common.Button variant="secondary" size="md">Secondary</common.Button>
         <common.Button variant="danger" size="md">Danger</common.Button>
         <common.Button variant="primary" size="md" disabled>Disabled</common.Button>
-      </div>
-      <div class="showcase-row">
-        <common.Button variant="primary" size="md" href="/admin">
-          <common.Icon name="arrow-right" size=16 />
-          Link Button
-        </common.Button>
-      </div>
-    </section>
-
-    <section class="showcase-section">
-      <h2>Pills</h2>
-      <div class="showcase-row">
-        <common.Pill variant="neutral">Neutral</common.Pill>
-        <common.Pill variant="good">Good</common.Pill>
-        <common.Pill variant="bad">Bad</common.Pill>
-        <common.Pill variant="accent">Accent</common.Pill>
-        <common.Pill variant="pending">Pending</common.Pill>
-        <common.Pill variant="processing">Processing</common.Pill>
       </div>
     </section>
 
@@ -50,65 +118,7 @@
     </section>
 
     <section class="showcase-section">
-      <h2>Colors</h2>
-
-      <h3 class="showcase-subtitle">Brand</h3>
-      <div class="showcase-row">
-        <div class="showcase-swatch" style="background: var(--clr-nav);">nav</div>
-        <div class="showcase-swatch" style="background: var(--clr-nav-text);">nav-text</div>
-        <div class="showcase-swatch" style="background: var(--clr-nav-link);">nav-link</div>
-        <div class="showcase-swatch" style="background: var(--clr-nav-accent);">nav-accent</div>
-        <div class="showcase-swatch" style="background: var(--clr-accent);">accent</div>
-        <div class="showcase-swatch" style="background: var(--clr-accent-hover);">accent-hover</div>
-        <div class="showcase-swatch" style="background: var(--clr-accent-light);">accent-light</div>
-      </div>
-
-      <h3 class="showcase-subtitle">Surface</h3>
-      <div class="showcase-row">
-        <div class="showcase-swatch" style="background: var(--clr-bg);">bg</div>
-        <div class="showcase-swatch" style="background: var(--clr-surface);">surface</div>
-        <div class="showcase-swatch" style="background: var(--clr-border);">border</div>
-        <div class="showcase-swatch" style="background: var(--clr-border-light);">border-light</div>
-        <div class="showcase-swatch" style="background: var(--clr-text);">text</div>
-        <div class="showcase-swatch" style="background: var(--clr-text-muted);">text-muted</div>
-        <div class="showcase-swatch" style="background: var(--clr-text-faint);">text-faint</div>
-      </div>
-
-      <h3 class="showcase-subtitle">Status</h3>
-      <div class="showcase-row">
-        <div class="showcase-swatch" style="background: var(--clr-good);">good</div>
-        <div class="showcase-swatch" style="background: var(--clr-good-bg); color: var(--clr-good);">good-bg</div>
-        <div class="showcase-swatch" style="background: var(--clr-bad);">bad</div>
-        <div class="showcase-swatch" style="background: var(--clr-bad-bg); color: var(--clr-bad);">bad-bg</div>
-        <div class="showcase-swatch" style="background: var(--clr-pending);">pending</div>
-        <div class="showcase-swatch" style="background: var(--clr-pending-bg); color: var(--clr-pending);">pending-bg</div>
-        <div class="showcase-swatch" style="background: var(--clr-processing);">processing</div>
-        <div class="showcase-swatch" style="background: var(--clr-processing-bg); color: var(--clr-processing);">processing-bg</div>
-      </div>
-      <div class="showcase-row">
-        <common.Pill variant="good">Active</common.Pill>
-        <common.Pill variant="bad">Inactive</common.Pill>
-        <common.Pill variant="pending">Pending</common.Pill>
-        <common.Pill variant="processing">Processing</common.Pill>
-        <common.Pill variant="neutral">Neutral</common.Pill>
-        <common.Pill variant="accent">Admin</common.Pill>
-      </div>
-
-      <h3 class="showcase-subtitle">Saturated</h3>
-      <div class="showcase-row">
-        <div class="showcase-swatch" style="background: var(--color-0);">0</div>
-        <div class="showcase-swatch" style="background: var(--color-1);">1</div>
-        <div class="showcase-swatch" style="background: var(--color-2);">2</div>
-        <div class="showcase-swatch" style="background: var(--color-3);">3</div>
-        <div class="showcase-swatch" style="background: var(--color-4);">4</div>
-        <div class="showcase-swatch" style="background: var(--color-5);">5</div>
-        <div class="showcase-swatch" style="background: var(--color-6);">6</div>
-        <div class="showcase-swatch" style="background: var(--color-7);">7</div>
-      </div>
-    </section>
-
-    <section class="showcase-section">
-      <h2>Table</h2>
+      <h2>Composed: table using all layers</h2>
       <common.Table headers={{ ["Name", "Email", "Role", "Status"] }}>
         {% for user in users %}
         <tr>
@@ -116,16 +126,16 @@
           <td>{{ user.email }}</td>
           <td>
             {% if user.role == 'admin' %}
-            <common.Pill variant="accent">Admin</common.Pill>
+            <common.Pill variant="role-admin">Admin</common.Pill>
             {% else %}
-            <common.Pill variant="neutral">Member</common.Pill>
+            <common.Pill variant="role-member">Member</common.Pill>
             {% endif %}
           </td>
           <td>
             {% if user.is_active %}
-            <common.Pill variant="good">Active</common.Pill>
+            <common.Pill variant="success">Active</common.Pill>
             {% else %}
-            <common.Pill variant="bad">Inactive</common.Pill>
+            <common.Pill variant="danger">Inactive</common.Pill>
             {% endif %}
           </td>
         </tr>

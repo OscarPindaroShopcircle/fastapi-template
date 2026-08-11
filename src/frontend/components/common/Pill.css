@@ -5,13 +5,16 @@
   padding: var(--sp-1) var(--sp-3);
   border-radius: var(--radius-full);
   font-size: var(--text-xs);
-  font-weight: 600;
+  font-weight: var(--weight-medium);
   white-space: nowrap;
 }
 
-.pill-neutral   { background: var(--clr-pending-bg); color: var(--clr-pending); }
-.pill-pending   { background: var(--clr-pending-bg); color: var(--clr-pending); }
-.pill-processing { background: var(--clr-processing-bg); color: var(--clr-processing); }
-.pill-good      { background: var(--clr-good-bg);    color: var(--clr-good); }
-.pill-bad       { background: var(--clr-bad-bg);     color: var(--clr-bad); }
-.pill-accent    { background: var(--clr-accent-light); color: var(--clr-accent); }
+.pill-neutral    { background: var(--status-neutral-bg); color: var(--status-neutral); }
+.pill-success    { background: var(--status-success-bg); color: var(--status-success); }
+.pill-danger     { background: var(--status-danger-bg);  color: var(--status-danger); }
+.pill-warning    { background: var(--status-warning-bg); color: var(--status-warning); }
+.pill-info       { background: var(--status-info-bg);    color: var(--status-info); }
+.pill-accent     { background: var(--clr-accent-bg);     color: var(--clr-accent); }
+.pill-role-admin  { background: var(--role-admin-bg);  color: var(--role-admin); }
+.pill-role-dev    { background: var(--role-dev-bg);    color: var(--role-dev); }
+.pill-role-member { background: var(--role-member-bg); color: var(--role-member); }

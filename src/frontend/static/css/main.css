@@ -1,86 +1,139 @@
 /* ============================================================
-   MAIN — design tokens + global reset
+   CIRCEUS — design tokens
    ------------------------------------------------------------
-   The single source of truth for colour, spacing, type, radii
-   and shadows. Everything else is expressed in these variables
-   — never raw hex or px. Loaded on every page via <link> in
-   Page.jinja (see {#css /static/css/main.css #}).
+   Organized in layers; each layer only reads from the one
+   below it.
+
+     1. Palette     raw hex, mode-stable      (never used directly)
+     2. Role        --clr-*                   UI structure/chrome
+     3. Status      --status-*                semantic meaning
+     3b. Role       --role-*                  permission roles
+     4. Category    --cat-*                   identity, no meaning
+     5. Type        --font-*, --text-*, --weight-*, --leading-*
+     6. Space       --sp-*
+     7. Radius      --radius-*
+     8. Shadow      --shadow-*
+     9. Motion      --dur-*, --ease-*
+
+   Rules:
+   - Components consume layers 2-9 only, never layer 1 directly.
+   - No hex value repeats across layers 2-4.
+   - --cat-* is one array; every entry same weight, interchangeable.
    ============================================================ */
 
 :root {
-  /* Colors */
-  --clr-nav:          #111110;
-  --clr-nav-text:     #f0f0ee;
-  --clr-nav-link:     #c8c8c4;
-  --clr-nav-accent:   #8fbfa3;
+  /* ---------- 2. Role tokens (light) ---------- */
+  --clr-bg:            #f5f5f4;
+  --clr-surface:       #ffffff;
+  --clr-surface-raised:#ffffff;
+  --clr-overlay:       rgba(20, 20, 18, 0.5);
 
-  --clr-bg:           #f5f5f2;
-  --clr-surface:      #ffffff;
-  --clr-border:       #e2e2de;
-  --clr-border-light: #ebebea;
+  --clr-border:        #e3e2df;
+  --clr-border-light:  #ebebea;
+  --clr-border-strong: #cfcecb;
 
-  --clr-text:         #1a1a18;
-  --clr-text-muted:   #6b6b67;
-  --clr-text-faint:   #9b9b97;
+  --clr-text:          #1a1a18;
+  --clr-text-secondary:#5f5e59;
+  --clr-text-muted:    #8f8e89;
+  --clr-text-on-accent:#ffffff;
 
-  --clr-accent:       #5b8a6f;
-  --clr-accent-hover: #4a7560;
-  --clr-accent-light: #e9f2ed;
+  --clr-accent:        #5b8a6f;
+  --clr-accent-hover:  #4a7560;
+  --clr-accent-bg:     #e9f2ed;
 
-  --clr-good:         #2d7a4f;
-  --clr-good-bg:      #e6f4ec;
-  --clr-bad:          #b83c30;
-  --clr-bad-bg:       #fce9e7;
-  --clr-pending:      #5f5e5a;
-  --clr-pending-bg:   #f1eee7;
-  --clr-processing:   #185fa5;
-  --clr-processing-bg:#e6f1fb;
-  --clr-processing-hover: #d3e6f7;
+  --clr-nav:           #14140f;
+  --clr-nav-text:      #f0f0ee;
+  --clr-nav-link:      #b8b7b0;
+  --clr-nav-accent:    #8fbfa3;
 
-  /* Spacing */
+  /* ---------- 3. Status tokens (light) ---------- */
+  --status-success:      #2d7a4f;
+  --status-success-bg:   #e6f4ec;
+  --status-danger:       #b83c30;
+  --status-danger-bg:    #fce9e7;
+  --status-warning:      #a3690b;
+  --status-warning-bg:   #fbf0dc;
+  --status-info:         #185fa5;
+  --status-info-bg:      #e6f1fb;
+  --status-neutral:      #5f5e5a;
+  --status-neutral-bg:   #eeede9;
+
+  /* ---------- 3b. Permission role tokens (light) ---------- */
+  --role-admin:      #a3690b;
+  --role-admin-bg:   #fbf0dc;
+  --role-dev:        #185fa5;
+  --role-dev-bg:     #e6f1fb;
+  --role-member:     #0f6e56;
+  --role-member-bg:  #e1f5ee;
+
+  /* ---------- 4. Category tokens (mode-stable) ---------- */
+  --cat-0: #4caf6e;
+  --cat-1: #e85d4a;
+  --cat-2: #378ade;
+  --cat-3: #9b59d0;
+  --cat-4: #e87b3d;
+  --cat-5: #d94a8a;
+  --cat-6: #5f5e5a;
+  --cat-7: #2ba39a;
+
+  /* ---------- 5. Typography ---------- */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.375rem;
+  --text-2xl:  1.75rem;
+  --text-3xl:  2.25rem;
+
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-bold:    700;
+
+  --leading-tight:  1.25;
+  --leading-normal: 1.6;
+
+  /* ---------- 6. Spacing (4px base unit) ---------- */
   --sp-1: 0.25rem;  --sp-2: 0.5rem;   --sp-3: 0.75rem;
   --sp-4: 1rem;     --sp-5: 1.25rem;  --sp-6: 1.5rem;
   --sp-8: 2rem;     --sp-10: 2.5rem;  --sp-12: 3rem;
-  --sp-16: 4rem;
+  --sp-16: 4rem;    --sp-20: 5rem;
 
-  /* Typography */
-  --font: 'Inter', system-ui, -apple-system, sans-serif;
-  --text-xs:   0.75rem;  --text-sm:   0.875rem; --text-base: 1rem;
-  --text-lg:   1.125rem; --text-xl:   1.25rem;  --text-2xl:  1.5rem;
-  --text-3xl:  1.875rem; --text-4xl:  2.25rem;
+  /* ---------- 7. Radius ---------- */
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-full: 9999px;
 
-  /* Radii */
-  --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px;
-  --radius-xl: 16px; --radius-full: 9999px;
+  /* ---------- 8. Shadow ---------- */
+  --shadow-sm: 0 1px 2px rgba(20,20,18,0.06);
+  --shadow-md: 0 4px 12px rgba(20,20,18,0.08), 0 1px 2px rgba(20,20,18,0.05);
+  --shadow-lg: 0 12px 32px rgba(20,20,18,0.12), 0 2px 6px rgba(20,20,18,0.06);
+  --shadow-focus: 0 0 0 3px var(--clr-accent-bg);
 
-  /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
-  --shadow-md: 0 4px 12px rgba(0,0,0,.08), 0 2px 4px rgba(0,0,0,.05);
-  --shadow-lg: 0 8px 24px rgba(0,0,0,.10), 0 4px 8px rgba(0,0,0,.06);
+  /* ---------- 9. Motion ---------- */
+  --dur-fast: 100ms;
+  --dur-base: 180ms;
+  --dur-slow: 280ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* Layout */
+  /* ---------- Layout ---------- */
   --sidebar-width: 240px;
-
-  /* Saturated colors — assigned by index */
-  --color-0: #4caf6e;
-  --color-1: #e85d4a;
-  --color-2: #378ade;
-  --color-3: #9b59d0;
-  --color-4: #e87b3d;
-  --color-5: #d94a8a;
-  --color-6: #5f5e5a;
-  --color-7: #2d7a4f;
 }
 
 /* ---------- Reset ---------- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 16px; -webkit-text-size-adjust: 100%; }
 body {
-  font-family: var(--font);
+  font-family: var(--font-sans);
   font-size: var(--text-base);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
   color: var(--clr-text);
   background: var(--clr-bg);
-  line-height: 1.6;
   min-height: 100vh;
 }
 a { color: inherit; text-decoration: none; }

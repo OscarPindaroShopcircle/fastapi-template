@@ -6,16 +6,16 @@
     <td>{{ user.email }}</td>
     <td>
       {% if user.role == 'admin' %}
-      <common.Pill variant="accent">Admin</common.Pill>
+      <common.Pill variant="role-admin">Admin</common.Pill>
       {% else %}
-      <common.Pill variant="neutral">Member</common.Pill>
+      <common.Pill variant="role-member">Member</common.Pill>
       {% endif %}
     </td>
     <td>
       {% if user.is_active %}
-      <common.Pill variant="good">Active</common.Pill>
+      <common.Pill variant="success">Active</common.Pill>
       {% else %}
-      <common.Pill variant="bad">Inactive</common.Pill>
+      <common.Pill variant="danger">Inactive</common.Pill>
       {% endif %}
     </td>
   </tr>
