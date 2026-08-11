@@ -1,4 +1,5 @@
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
+import uuid
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,9 +12,15 @@ from ..db.models import (
     UserModel,
     UserPasswordModel,
 )
-from .exceptions import AuthError, InvalidCredentials, NotInvited
+from .exceptions import (
+    AuthError,
+    InvalidCredentials,
+    InvitationAlreadyExists,
+    InvitationNotFound,
+    NotInvited,
+)
 from .password import hash_password, verify_password
-from .schemas import RegisterRequest
+from .schemas import InvitationCreate, RegisterRequest
 
 
 async def find_by_provider(
@@ -62,6 +69,58 @@ async def get_all_invitations(db: AsyncSession) -> list[InvitationModel]:
         select(InvitationModel).order_by(InvitationModel.created_at.desc())
     )
     return list(result.scalars().all())
+
+
+async def get_invitation(
+    db: AsyncSession, invitation_id: int
+) -> InvitationModel | None:
+    """Return a single invitation by ID, or None."""
+    result = await db.execute(
+        select(InvitationModel).where(InvitationModel.id == invitation_id)
+    )
+    return result.scalar_one_or_none()
+
+
+async def get_invitation_by_email(
+    db: AsyncSession, email: str
+) -> InvitationModel | None:
+    """Return the invitation for ``email``, or None."""
+    result = await db.execute(
+        select(InvitationModel).where(InvitationModel.email == email)
+    )
+    return result.scalar_one_or_none()
+
+
+async def create_invitation(
+    db: AsyncSession,
+    body: InvitationCreate,
+    invited_by: uuid.UUID,
+    expire_days: int = 7,
+) -> InvitationModel:
+    """Create an invitation. Raises ``InvitationAlreadyExists`` on conflict."""
+    existing = await get_invitation_by_email(db, body.email)
+    if existing is not None:
+        raise InvitationAlreadyExists(body.email)
+
+    invitation = InvitationModel(
+        email=body.email,
+        role=body.role,
+        invited_by=invited_by,
+        expires_at=datetime.now(UTC) + timedelta(days=expire_days),
+    )
+    db.add(invitation)
+    await db.flush()
+    await db.refresh(invitation)
+    return invitation
+
+
+async def revoke_invitation(db: AsyncSession, invitation_id: int) -> None:
+    """Delete an invitation by ID. Raises ``InvitationNotFound`` if missing."""
+    invitation = await get_invitation(db, invitation_id)
+    if invitation is None:
+        raise InvitationNotFound(invitation_id)
+    await db.delete(invitation)
+    await db.flush()
 
 
 async def login_with_provider(

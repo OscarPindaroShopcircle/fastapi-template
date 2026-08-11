@@ -52,3 +52,23 @@ class InvalidCredentials(HTTPException):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=detail,
         )
+
+
+class InvitationNotFound(HTTPException):
+    """The invitation does not exist."""
+
+    def __init__(self, invitation_id: int):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Invitation with id {invitation_id} not found",
+        )
+
+
+class InvitationAlreadyExists(HTTPException):
+    """An invitation for this email already exists."""
+
+    def __init__(self, email: str):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"An invitation for {email} already exists",
+        )

@@ -4,7 +4,7 @@ from typing import Annotated, Optional
 from pydantic import ConfigDict, Field
 
 from ..db.models.core.enums import UserRole
-from ..schemas import AppBaseModelStripped
+from ..schemas import AppBaseModelStripped, UUIDField
 
 
 class TokenResponse(AppBaseModelStripped):
@@ -77,7 +77,7 @@ class InvitationResponse(AppBaseModelStripped):
     id: Annotated[int, Field(description="Invitation ID")]
     email: Annotated[str, Field(description="Invited email address")]
     role: Annotated[UserRole, Field(description="Role assigned to the invitee")]
-    invited_by: Annotated[int, Field(description="User ID of the inviter")]
+    invited_by: Annotated[UUIDField, Field(description="User ID of the inviter")]
     created_at: Annotated[
         datetime, Field(description="When the invitation was created")
     ]
@@ -91,6 +91,7 @@ class InvitationResponse(AppBaseModelStripped):
 class InvitationView(AppBaseModelStripped):
     """View-layer invitation — includes the inviter's display name."""
 
+    id: Annotated[int, Field(description="Invitation ID")]
     email: Annotated[str, Field(description="Invited email address")]
     role: Annotated[UserRole, Field(description="Role assigned to the invitee")]
     invited_by_name: Annotated[str, Field(description="Name of the inviter")]
@@ -98,6 +99,9 @@ class InvitationView(AppBaseModelStripped):
     accepted_at: Annotated[
         Optional[datetime],
         Field(description="When the invitation was accepted, if ever"),
+    ]
+    is_expired: Annotated[
+        bool, Field(default=False, description="Whether the invitation has expired")
     ]
 
 
