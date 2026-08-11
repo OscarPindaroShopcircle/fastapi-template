@@ -8,16 +8,6 @@
   padding: var(--sp-4);
 }
 
-.login-card {
-  width: 100%;
-  max-width: 400px;
-  background: var(--clr-surface);
-  border: 1px solid var(--clr-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  padding: var(--sp-8);
-}
-
 .login-brand {
   display: flex;
   align-items: center;
@@ -53,47 +43,13 @@
 .login-subtitle {
   font-size: var(--text-sm);
   color: var(--clr-text-secondary);
-  margin-bottom: var(--sp-5);
+  margin-bottom: var(--sp-1);
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
   gap: var(--sp-4);
-}
-
-.login-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-1);
-}
-
-.login-label {
-  font-size: var(--text-sm);
-  font-weight: var(--weight-medium);
-  color: var(--clr-text-secondary);
-}
-
-.login-field input {
-  padding: var(--sp-2) var(--sp-3);
-  border: 1px solid var(--clr-border);
-  border-radius: var(--radius-md);
-  font-size: var(--text-sm);
-  background: var(--clr-surface);
-  color: var(--clr-text);
-  transition: border-color var(--dur-base) var(--ease-out);
-}
-
-.login-field input:focus {
-  outline: none;
-  border-color: var(--clr-accent);
-  box-shadow: var(--shadow-focus);
-}
-
-.btn-block {
-  width: 100%;
-  justify-content: center;
-  margin-top: var(--sp-2);
 }
 
 .login-switch {
@@ -136,8 +92,4 @@
   flex: 1;
   height: 1px;
   background: var(--clr-border);
-}
-
-.login-google-btn {
-  justify-content: center;
 }

@@ -475,3 +475,85 @@ JinjaX does not automatically provide:
 - browser-side component lifecycle management
 
 Those concerns still belong to the application, its test suite, or separate tooling.
+
+## Project conventions
+
+The rules this codebase follows on top of the JinjaX primitives above.
+
+### Argument passing
+
+| Type | Syntax | Example |
+|---|---|---|
+| String | quoted | `<Card title="Hello">` |
+| Expression (number, bool, object) | `{{ value }}` or `:prop="value"` | `<Card max_width={{ 400 }}>` |
+| Boolean `True` | bare name | `<Card disabled>` |
+| Dashed name | maps to underscore in `{#def#}` | `aria-label="x"` → `aria_label` |
+
+A bare unquoted value like `size=32` is **not** a valid expression — it is treated as a string. Either quote it (`size="32"`) and convert with `| int` in the component, or use expression syntax (`size={{ 32 }}`). Prefer the expression syntax for non-string values.
+
+### Folder layout
+
+```
+src/frontend/components/
+├── common/        # Reusable M3 primitives (Button, Card, Field, Icon, Pill, Table, Avatar)
+├── layout/        # Page shells (BlankPage, Page, Sidebar)
+├── auth/          # Auth-specific pages (Login)
+└── pages/         # Full pages composed from common + layout
+    ├── admin/
+    └── showcase/  # The living style guide at /components
+```
+
+Component names are dot-separated by folder: `common.Button`, `layout.Page`, `auth.Login`, `pages.showcase.Showcase`.
+
+### Component anatomy
+
+Every component follows this shape:
+
+```jinja
+{#def required_arg, optional_arg="default", variant="outlined" #}
+
+<element class="component-name component-name-{{ variant }}" {{ attrs.render() }}>
+  {{ content }}
+</element>
+```
+
+- Declare every argument in `{#def ... #}` — no undeclared props reach the template logic.
+- Undeclared HTML attributes (e.g. `type="submit"`, `hx-*`, `data-*`) flow through `attrs.render()` onto the root element.
+- The root element always carries a class named after the component (`card`, `field`, `btn`, `pill`) plus a variant modifier (`card-elevated`, `field-outlined`, `btn-primary`).
+
+### CSS
+
+- Each component has a colocated `<Name>.css` (auto-loaded by JinjaX, no manual `{#css#}` needed).
+- **Every value reads from a design token** in `src/frontend/static/css/main.css` — no raw hex, no magic px. The only raw px allowed are border widths and shadow spreads for which no token exists (consistent with `Button.css`, `Sidebar.css`).
+- Class names are kebab-case and prefixed by the component name (`card-elevated`, `field-input`, `btn-primary`) so they don't collide across components.
+- Styles are global (JinjaX doesn't scope them), so always scope rules under the component's root class.
+
+### Layout shells
+
+- `layout.BlankPage` — the HTML shell only: `<!DOCTYPE>`, `<head>`, `catalog.render_assets()`, htmx/lucide scripts. No sidebar. Used by unauthenticated pages (login, error pages).
+- `layout.Page` — composes `BlankPage` + `Sidebar` + `<main class="page-main">`. Used by authenticated pages.
+
+```jinja
+{# layout/Page.jinja #}
+<layout.BlankPage title="{{ title }}">
+  <layout.Sidebar current_user={{ current_user }} active="{{ active }}" />
+  <main class="page-main">
+    {{ content }}
+  </main>
+</layout.BlankPage>
+```
+
+### The showcase
+
+`pages.showcase.Showcase` (served at `/components`) is the living style guide. **Every new `common.*` component must be added there** with all its variants and states visible. The showcase is the source of truth for what the design system looks like; if a component isn't there, it doesn't exist.
+
+### Design system
+
+Material Design 3 (M3) is the reference. Component variants and states follow the M3 specs:
+
+- **Card** — elevated / outlined / filled
+- **Text field** — outlined / filled, with error and supporting-text states
+- **Button** — primary / secondary / danger, sizes sm / md / lg
+- **Pill** — success / danger / warning / info / neutral / accent / role-*
+
+When adding a new component, check the M3 spec first, then map it to the existing tokens.

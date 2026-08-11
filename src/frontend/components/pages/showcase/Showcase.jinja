@@ -143,6 +143,42 @@
     </section>
 
     <section class="showcase-section">
+      <h2>Cards</h2>
+      <p class="showcase-note">M3 cards — elevated (default), outlined, filled. Flexible containers for grouped content.</p>
+      <div class="showcase-row" style="align-items: flex-start; gap: var(--sp-4);">
+        <common.Card variant="elevated" max_width={{ 240 }}>
+          <h3 style="font-size: var(--text-lg); font-weight: var(--weight-bold); margin-bottom: var(--sp-2);">Elevated</h3>
+          <p style="font-size: var(--text-sm); color: var(--clr-text-secondary);">Shadow + surface bg. Default for dialogs and focused content.</p>
+        </common.Card>
+        <common.Card variant="outlined" max_width={{ 240 }}>
+          <h3 style="font-size: var(--text-lg); font-weight: var(--weight-bold); margin-bottom: var(--sp-2);">Outlined</h3>
+          <p style="font-size: var(--text-sm); color: var(--clr-text-secondary);">Border + surface bg. Subtle separation in dense layouts.</p>
+        </common.Card>
+        <common.Card variant="filled" max_width={{ 240 }}>
+          <h3 style="font-size: var(--text-lg); font-weight: var(--weight-bold); margin-bottom: var(--sp-2);">Filled</h3>
+          <p style="font-size: var(--text-sm); color: var(--clr-text-secondary);">Tinted bg, no border or shadow. For grouped content in a page.</p>
+        </common.Card>
+      </div>
+    </section>
+
+    <section class="showcase-section">
+      <h2>Fields</h2>
+      <p class="showcase-note">M3 text fields — outlined (default) and filled. Label, input, supporting text, and error state.</p>
+      <div class="showcase-row" style="align-items: flex-start; gap: var(--sp-4);">
+        <div style="display: flex; flex-direction: column; gap: var(--sp-3); width: 240px;">
+          <common.Field label="Name" name="demo-name" placeholder="Jane Doe" helper="As it appears on your ID" />
+          <common.Field label="Email" name="demo-email" type="email" placeholder="jane@example.com" />
+          <common.Field label="Password" name="demo-pw" type="password" placeholder="At least 8 characters" error="Too short — minimum 8 characters" />
+        </div>
+        <div style="display: flex; flex-direction: column; gap: var(--sp-3); width: 240px;">
+          <common.Field label="Name" name="demo-name-filled" variant="filled" placeholder="Jane Doe" />
+          <common.Field label="Email" name="demo-email-filled" type="email" variant="filled" placeholder="jane@example.com" helper="We won't share it." />
+          <common.Field label="Code" name="demo-code-filled" variant="filled" placeholder="6-digit code" error="Invalid code" />
+        </div>
+      </div>
+    </section>
+
+    <section class="showcase-section">
       <h2>Composed: table using all layers</h2>
       <common.Table headers={{ ["Name", "Email", "Role", "Status"] }}>
         {% for user in users %}
