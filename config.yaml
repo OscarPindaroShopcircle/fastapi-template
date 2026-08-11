@@ -12,5 +12,5 @@ migrator:
 
 frontend:
   enabled: true
-  components_dir: components
-  static_dir: static
+  components_dir: src/frontend/components
+  static_dir: src/frontend/static

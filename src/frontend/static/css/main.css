@@ -1,9 +1,10 @@
 /* ============================================================
-   PAGE — global reset + Circeus design tokens
+   MAIN — design tokens + global reset
    ------------------------------------------------------------
-   Loaded on every page via JinjaX auto-loading (Page.jinja
-   is always the root component). Everything else in the app
-   is expressed in these variables — never raw hex or px.
+   The single source of truth for colour, spacing, type, radii
+   and shadows. Everything else is expressed in these variables
+   — never raw hex or px. Loaded on every page via <link> in
+   Page.jinja (see {#css /static/css/main.css #}).
    ============================================================ */
 
 :root {
@@ -34,7 +35,7 @@
   --clr-pending:      #7a7a76;
   --clr-processing:   #b07a20;
   --clr-processing-bg:#fdf3e3;
-  --clr-processing-hover: #f5ge6c8;
+  --clr-processing-hover: #f5e6c8;
 
   /* Spacing */
   --sp-1: 0.25rem;  --sp-2: 0.5rem;   --sp-3: 0.75rem;
@@ -76,15 +77,3 @@ a { color: inherit; text-decoration: none; }
 img { display: block; max-width: 100%; }
 ul, ol { list-style: none; }
 button, input, textarea, select { font: inherit; }
-
-/* ---------- Layout shell ---------- */
-.page-main {
-  margin-left: var(--sidebar-width);
-  padding: var(--sp-8) var(--sp-10);
-  min-height: 100vh;
-  transition: margin-left .2s ease;
-}
-
-body:has(.sidebar-collapsed) .page-main {
-  margin-left: 72px;
-}

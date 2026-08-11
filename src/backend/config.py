@@ -107,10 +107,12 @@ class FrontendConfig(BaseModel):
         default=None, description="Path to Jinja2 templates directory (optional)"
     )
     components_dir: str = Field(
-        default="components", description="Path to JinjaX components directory"
+        default="src/frontend/components",
+        description="Path to JinjaX components directory",
     )
     static_dir: str = Field(
-        default="static", description="Path to static files directory"
+        default="src/frontend/static",
+        description="Path to static files directory",
     )
 
 
