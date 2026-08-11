@@ -1,0 +1,22 @@
+{#def users, invitations, current_user=None #}
+<layout.Page title="Admin Dashboard" current_user={{ current_user }} active="admin">
+  <div class="admin-dashboard">
+    <header class="admin-header">
+      <h1>Admin Dashboard</h1>
+      <common.Button variant="primary" size="md">
+        <common.Icon name="user-plus" size=16 />
+        Invite User
+      </common.Button>
+    </header>
+
+    <section class="admin-section">
+      <h2 class="admin-section-title">Users</h2>
+      <admin.UsersTable users={{ users }} />
+    </section>
+
+    <section class="admin-section">
+      <h2 class="admin-section-title">Pending Invitations</h2>
+      <admin.InvitationsTable invitations={{ invitations }} />
+    </section>
+  </div>
+</layout.Page>

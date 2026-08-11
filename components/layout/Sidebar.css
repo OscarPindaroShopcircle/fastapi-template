@@ -9,7 +9,7 @@
   color: var(--clr-nav-text);
   display: flex;
   flex-direction: column;
-  border-right: 1px solid rgba(255,255,255,.06);
+  border-right: 1px solid rgba(255,255,255,.12);
   transition: width .2s ease;
 }
 
@@ -18,7 +18,7 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--sp-4) var(--sp-5);
-  border-bottom: 1px solid rgba(255,255,255,.06);
+  border-bottom: 1px solid rgba(255,255,255,.12);
   min-height: 56px;
 }
 
@@ -149,7 +149,7 @@
 
 .sidebar-footer {
   padding: var(--sp-4) var(--sp-6);
-  border-top: 1px solid rgba(255,255,255,.06);
+  border-top: 1px solid rgba(255,255,255,.12);
 }
 
 .sidebar-user {

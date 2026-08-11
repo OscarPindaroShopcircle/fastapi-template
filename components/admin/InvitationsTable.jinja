@@ -1,0 +1,24 @@
+{#def invitations #}
+<common.Table headers={{ ["Email", "Role", "Invited By", "Expires", "Status"] }}>
+  {% for inv in invitations %}
+  <tr>
+    <td>{{ inv.email }}</td>
+    <td>
+      {% if inv.role == 'admin' %}
+      <common.Pill variant="accent">Admin</common.Pill>
+      {% else %}
+      <common.Pill variant="neutral">Member</common.Pill>
+      {% endif %}
+    </td>
+    <td>{{ inv.invited_by_name or inv.invited_by }}</td>
+    <td>{{ inv.expires_at }}</td>
+    <td>
+      {% if inv.accepted_at %}
+      <common.Pill variant="good">Accepted</common.Pill>
+      {% else %}
+      <common.Pill variant="pending">Pending</common.Pill>
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+</common.Table>
