@@ -4,7 +4,7 @@ from typing import Annotated, Generic, List, TypeVar
 from zoneinfo import ZoneInfo
 
 from fastapi.encoders import jsonable_encoder
-from pydantic import BaseModel, BeforeValidator, ConfigDict, Field
+from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, field_serializer
 from pydantic.alias_generators import to_camel
 
 
@@ -15,7 +15,6 @@ def datetime_to_gmt_str(dt: datetime) -> str:
 
 
 _base_config = dict(
-    json_encoders={datetime: datetime_to_gmt_str},
     populate_by_name=True,
     alias_generator=to_camel,
     validate_default=True,
@@ -38,6 +37,13 @@ class AppBaseModel(BaseModel):
     """
 
     model_config = ConfigDict(**_base_config, from_attributes=True)
+
+    @field_serializer("created_at", "updated_at", mode="plain", check_fields=False)
+    @classmethod
+    def _serialize_datetime(cls, v: datetime | None) -> str | None:
+        if v is None:
+            return None
+        return datetime_to_gmt_str(v)
 
     def serializable_dict(self, **kwargs):
         """Return a dict which contains only serializable fields."""
