@@ -82,4 +82,9 @@ button, input, textarea, select { font: inherit; }
   margin-left: var(--sidebar-width);
   padding: var(--sp-8) var(--sp-10);
   min-height: 100vh;
+  transition: margin-left .2s ease;
+}
+
+body:has(.sidebar-collapsed) .page-main {
+  margin-left: 72px;
 }
