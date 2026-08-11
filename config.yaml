@@ -10,6 +10,10 @@ migrator:
   port: 5432
   db: backend
 
+auth:
+  bootstrap_admin_email: oscar@shopcircle.co
+  redirect_uri: http://localhost:8000/auth/callback
+
 frontend:
   enabled: true
   components_dir: src/frontend/components

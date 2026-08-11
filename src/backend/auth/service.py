@@ -56,6 +56,14 @@ async def find_pending_invitation(
     return result.scalar_one_or_none()
 
 
+async def get_all_invitations(db: AsyncSession) -> list[InvitationModel]:
+    """Return all invitations, newest first."""
+    result = await db.execute(
+        select(InvitationModel).order_by(InvitationModel.created_at.desc())
+    )
+    return list(result.scalars().all())
+
+
 async def login_with_provider(
     db: AsyncSession, provider: str, openid, config: AppConfig
 ) -> UserModel:

@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from .auth.routes.auth import router as auth_router
 from .config import AppConfig, get_app_config
 from .db.db import DatabaseManager
 from .users.routes import router as users_router
@@ -49,6 +50,7 @@ def create_app(config: AppConfig | None = None) -> FastAPI:
 
     # normal router import
     app.include_router(users_router)
+    app.include_router(auth_router)
 
     # optional frontend routes
     if config.frontend and config.frontend.enabled:

@@ -7,6 +7,7 @@ from alembic import context
 
 from src.backend.config import get_app_config
 from src.backend.db.db import Base
+from src.backend.db import models  # noqa: F401 — registers all tables with Base.metadata
 
 config = context.config
 

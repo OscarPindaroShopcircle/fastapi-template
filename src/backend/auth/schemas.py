@@ -88,6 +88,19 @@ class InvitationResponse(AppBaseModelStripped):
     expires_at: Annotated[datetime, Field(description="When the invitation expires")]
 
 
+class InvitationView(AppBaseModelStripped):
+    """View-layer invitation — includes the inviter's display name."""
+
+    email: Annotated[str, Field(description="Invited email address")]
+    role: Annotated[UserRole, Field(description="Role assigned to the invitee")]
+    invited_by_name: Annotated[str, Field(description="Name of the inviter")]
+    expires_at: Annotated[datetime, Field(description="When the invitation expires")]
+    accepted_at: Annotated[
+        Optional[datetime],
+        Field(description="When the invitation was accepted, if ever"),
+    ]
+
+
 class InvitationCreateResponse(AppBaseModelStripped):
     """Response for ``POST /api/invitations`` — invitation plus the login link."""
 
