@@ -103,8 +103,11 @@ class FrontendConfig(BaseModel):
     """Frontend configuration."""
 
     enabled: bool = Field(default=True, description="Enable frontend rendering")
-    templates_dir: str = Field(
-        default="templates", description="Path to templates directory"
+    templates_dir: Optional[str] = Field(
+        default=None, description="Path to Jinja2 templates directory (optional)"
+    )
+    components_dir: str = Field(
+        default="components", description="Path to JinjaX components directory"
     )
     static_dir: str = Field(
         default="static", description="Path to static files directory"

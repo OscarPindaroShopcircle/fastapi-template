@@ -1,8 +1,8 @@
 from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession
-from .jinja import _build_templates
 from .config import get_app_config, AppConfig
 from .db.db import DatabaseManager
+from .jinja import get_catalog, _build_templates
 from fastapi import Depends
 
 
@@ -33,17 +33,28 @@ async def get_config() -> AppConfig:
     return get_app_config()
 
 
-def get_templates(config: AppConfig = Depends(get_app_config)):
-    """Return the shared ``Jinja2Templates`` instance.
+def get_catalog_dep(config: AppConfig = Depends(get_app_config)):
+    """Return the shared JinjaX ``Catalog`` instance.
 
-    Requires ``frontend`` to be configured -- a view route depending on this
-    only runs when the frontend is enabled, so a missing config here is a
-    misconfiguration worth surfacing loudly.
+    Requires ``frontend`` to be configured — a view route depending on this
+    only runs when the frontend is enabled.
     """
     if config.frontend is None:
         raise RuntimeError(
-            "Templates requested but no `frontend` config is set; "
+            "Catalog requested but no `frontend` config is set; "
             "add a `frontend:` block to config.yaml."
         )
+    return get_catalog(config.frontend.components_dir)
 
+
+def get_templates(config: AppConfig = Depends(get_app_config)):
+    """Return the shared ``Jinja2Templates`` instance, if configured.
+
+    Only builds when ``templates_dir`` is set in the frontend config.
+    """
+    if config.frontend is None or config.frontend.templates_dir is None:
+        raise RuntimeError(
+            "Templates requested but `templates_dir` is not set; "
+            "add it to the `frontend:` block in config.yaml."
+        )
     return _build_templates(config.frontend.templates_dir)

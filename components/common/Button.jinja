@@ -1,0 +1,10 @@
+{#def variant="primary", size="md", href=None #}
+{% if href %}
+<a href="{{ href }}" {{ attrs.render(class="btn btn-" ~ variant ~ " btn-" ~ size) }}>
+  {{ content }}
+</a>
+{% else %}
+<button {{ attrs.render(class="btn btn-" ~ variant ~ " btn-" ~ size) }}>
+  {{ content }}
+</button>
+{% endif %}

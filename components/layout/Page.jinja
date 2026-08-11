@@ -1,0 +1,16 @@
+{#def title, current_user=None, active=None #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }} — Circeus</title>
+  {{ catalog.render_assets() }}
+</head>
+<body>
+  <layout.Sidebar current_user={{ current_user }} active="{{ active }}" />
+  <main class="page-main">
+    {{ content }}
+  </main>
+</body>
+</html>

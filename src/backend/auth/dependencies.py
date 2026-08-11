@@ -149,3 +149,20 @@ async def get_current_admin_user(
     if user.role != UserRole.ADMIN:
         raise NotAdmin()
     return user
+
+
+async def get_optional_user(
+    request: Request,
+    response: Response,
+    db: AsyncSession = Depends(get_db_session),
+    config: AppConfig = Depends(get_app_config),
+) -> User | None:
+    """Like ``get_current_user`` but returns ``None`` instead of raising 401.
+
+    Used by view routes that render pages for both authenticated and
+    anonymous visitors (e.g. the home page).
+    """
+    try:
+        return await get_current_user(request, response, db, config)
+    except InvalidToken:
+        return None

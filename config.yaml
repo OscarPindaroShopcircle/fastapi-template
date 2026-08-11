@@ -9,3 +9,8 @@ migrator:
   host: localhost
   port: 5432
   db: backend
+
+frontend:
+  enabled: true
+  components_dir: components
+  static_dir: static

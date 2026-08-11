@@ -14,6 +14,9 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from functools import lru_cache
 
+import jinjax
+from fastapi.templating import Jinja2Templates
+
 
 def _money(value: float | None) -> str:
     """Jinja filter: ``{{ view.cost.total_cost | money }}`` -> ``"$0.42"``.
@@ -55,12 +58,22 @@ def _metric_value(value: float | None) -> str:
 
 @lru_cache(maxsize=1)
 def _build_templates(templates_dir: str):
-    # local import so jinja2 is only required when the frontend is enabled
-    from fastapi.templating import Jinja2Templates
-
     templates = Jinja2Templates(directory=templates_dir)
     templates.env.filters["money"] = _money
     templates.env.filters["money_precise"] = _money_precise
     templates.env.filters["metric_value"] = _metric_value
     templates.env.globals["now"] = lambda: datetime.now(UTC)
     return templates
+
+
+@lru_cache(maxsize=1)
+def get_catalog(components_dir: str):
+    """Build the JinjaX catalog — the object that manages components.
+
+    Components are ``.jinja`` files inside ``components_dir`` (and its
+    subfolders). CSS/JS files colocated next to a component are
+    auto-loaded and served via a StaticFiles mount (see ``server.py``).
+    """
+    catalog = jinjax.Catalog()
+    catalog.add_folder(components_dir)
+    return catalog

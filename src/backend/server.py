@@ -17,7 +17,9 @@ async def lifespan(app: FastAPI):
     await db_manager.close()
 
 
-def create_app(config: AppConfig) -> FastAPI:
+def create_app(config: AppConfig | None = None) -> FastAPI:
+    if config is None:
+        config = get_app_config()
 
     app = FastAPI(
         title="Fantasy Backend",
@@ -33,6 +35,14 @@ def create_app(config: AppConfig) -> FastAPI:
     )
 
     if config.frontend and config.frontend.enabled:
+        # JinjaX generates asset URLs like /static/components/common/button.css.
+        # Mount the components directory BEFORE the generic /static mount so
+        # the more specific prefix takes priority.
+        app.mount(
+            "/static/components",
+            StaticFiles(directory=config.frontend.components_dir),
+            name="components-static",
+        )
         app.mount(
             "/static", StaticFiles(directory=config.frontend.static_dir), name="static"
         )
@@ -40,9 +50,11 @@ def create_app(config: AppConfig) -> FastAPI:
     # normal router import
     app.include_router(users_router)
 
-    # optional frontend routes import
+    # optional frontend routes
     if config.frontend and config.frontend.enabled:
-        pass
+        from .views import router as views_router  # noqa: PLC0415
+
+        app.include_router(views_router)
 
     # health check endpoint
     @app.get("/ping")

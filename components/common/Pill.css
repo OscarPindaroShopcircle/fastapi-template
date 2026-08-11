@@ -1,0 +1,15 @@
+/* ---------- Pill ---------- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pill-neutral { background: var(--clr-pending-bg); color: var(--clr-pending); }
+.pill-good    { background: var(--clr-good-bg);    color: var(--clr-good); }
+.pill-bad     { background: var(--clr-bad-bg);     color: var(--clr-bad); }
+.pill-accent  { background: var(--clr-accent-light); color: var(--clr-accent); }
