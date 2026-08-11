@@ -31,7 +31,7 @@ async def login_page(
     """Login / register page — standalone (no sidebar layout)."""
     google_enabled = build_google_sso(config) is not None
     return catalog.render(
-        "auth.Login",
+        "pages.login.Login",
         mode=mode,
         error=error,
         google_enabled=google_enabled,
