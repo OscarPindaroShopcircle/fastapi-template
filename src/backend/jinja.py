@@ -14,6 +14,7 @@ from __future__ import annotations
 import zlib
 from datetime import UTC, datetime
 from functools import lru_cache
+from markupsafe import Markup
 
 import jinjax
 from fastapi.templating import Jinja2Templates
@@ -68,12 +69,28 @@ def _cat_index(value: str, n: int = 8) -> int:
     return zlib.crc32((value or "").strip().lower().encode("utf-8")) % n
 
 
+def _time(value) -> str:
+    """Jinja filter: wrap a datetime in a ``<time>`` element with the raw ISO string.
+
+    ``{{ inv.expires_at | time }}`` -> ``<time datetime="2026-08-18T...">...</time>``
+
+    The text content is the raw ISO string; a client-side JS utility
+    (``format-times.js``) replaces it with the user's local timezone format.
+    Falls back to the ISO string if JS is disabled.
+    """
+    if value is None:
+        return "—"
+    iso = value.isoformat() if hasattr(value, "isoformat") else str(value)
+    return Markup(f'<time datetime="{iso}">{iso}</time>')
+
+
 @lru_cache(maxsize=1)
 def _build_templates(templates_dir: str):
     templates = Jinja2Templates(directory=templates_dir)
     templates.env.filters["money"] = _money
     templates.env.filters["money_precise"] = _money_precise
     templates.env.filters["metric_value"] = _metric_value
+    templates.env.filters["time"] = _time
     templates.env.globals["now"] = lambda: datetime.now(UTC)
     return templates
 
@@ -89,4 +106,5 @@ def get_catalog(components_dir: str):
     catalog = jinjax.Catalog()
     catalog.add_folder(components_dir)
     catalog.jinja_env.filters["cat_index"] = _cat_index
+    catalog.jinja_env.filters["time"] = _time
     return catalog

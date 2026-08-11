@@ -11,7 +11,7 @@
       {% endif %}
     </td>
     <td>{{ inv.invited_by_name or inv.invited_by }}</td>
-    <td>{{ inv.expires_at }}</td>
+    <td><em>{{ inv.expires_at | time }}</em></td>
     <td>
       {% if inv.accepted_at %}
       <common.Pill variant="success">Accepted</common.Pill>
