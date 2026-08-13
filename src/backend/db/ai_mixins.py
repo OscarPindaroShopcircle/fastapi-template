@@ -11,7 +11,7 @@ from datetime import datetime
 from sqlalchemy import DateTime, Enum, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import MappedColumn, mapped_column
 
-from .models.core.enums import FeedbackValue
+from .enums import FeedbackValue
 
 # Classification labels are short, closed-vocabulary strings — capped tight
 # (not 255) so indexes/filters on them stay fast and low-memory.

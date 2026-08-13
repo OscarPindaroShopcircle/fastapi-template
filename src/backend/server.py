@@ -54,6 +54,11 @@ def create_app(config: AppConfig | None = None) -> FastAPI:
     app.include_router(auth_router)
     app.include_router(invitation_router)
 
+    # Importing the registry registers every model with Base.metadata so
+    # DatabaseManager.initialize_tables() / alembic see all tables, including
+    # features that have no router mounted (e.g. files/).
+    from .db import registry  # noqa: F401, PLC0415
+
     # optional frontend routes
     if config.frontend and config.frontend.enabled:
         from .auth.views import router as auth_views_router  # noqa: PLC0415
@@ -76,6 +81,9 @@ def create_app(config: AppConfig | None = None) -> FastAPI:
         return {"status": "ok"}
 
     return app
+
+
+app = create_app()
 
 
 if __name__ == "__main__":

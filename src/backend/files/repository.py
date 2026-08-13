@@ -3,7 +3,7 @@ import uuid
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..db.models.core.file import FileModel
+from .models import FileModel
 from .schemas import FileCreate, FileUpdate
 
 

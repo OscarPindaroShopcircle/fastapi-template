@@ -2,7 +2,7 @@ from typing import Annotated
 
 from pydantic import Field
 
-from ..db.models.core.enums import StorageType
+from .models import StorageType
 from ..schemas import AppBaseModel, TimestampMixin, UUIDField
 
 

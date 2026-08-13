@@ -1,9 +1,21 @@
-from sqlalchemy import Enum, String, Text
+from enum import Enum
+
+from sqlalchemy import Enum as SAEnum, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
-from ...db import Base
-from .enums import StorageType
-from ...mixins import TimestampMixin, UUIDv7PrimaryKeyMixin
+from ..db.db import Base
+from ..db.mixins import TimestampMixin, UUIDv7PrimaryKeyMixin
+
+
+class StorageType(str, Enum):
+    """Where a File physically lives.
+
+    Only LOCAL is wired up for now; the rest are placeholders for the
+    filesystem backends we'll add later (S3, Azure Blob, Railway volumes).
+    """
+
+    LOCAL = "LOCAL"
+    S3 = "S3"
 
 
 class FileModel(Base, UUIDv7PrimaryKeyMixin, TimestampMixin):
@@ -22,7 +34,7 @@ class FileModel(Base, UUIDv7PrimaryKeyMixin, TimestampMixin):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     location: Mapped[str] = mapped_column(Text, nullable=False)
     storage_type: Mapped[StorageType | None] = mapped_column(
-        Enum(StorageType),
+        SAEnum(StorageType),
         nullable=True,
         default=None,
     )

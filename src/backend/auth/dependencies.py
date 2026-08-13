@@ -7,8 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..config import AppConfig, get_app_config
 from ..dependencies import get_db_session
-from ..db.models.core.enums import UserRole
-from ..db.models import UserModel
+from ..db.enums import UserRole
+from ..users.models import UserModel
 from ..users.schemas import User
 from .exceptions import InvalidToken, NotAdmin
 from .tokens import (
@@ -68,7 +68,10 @@ async def _try_refresh_from_cookie(
     if payload.get("type") != "refresh":
         return None
 
-    user_id = uuid.UUID(payload["sub"])
+    try:
+        user_id = uuid.UUID(payload["sub"])
+    except ValueError, KeyError, TypeError:
+        return None
     result = await db.execute(select(UserModel).where(UserModel.id == user_id))
     user_model = result.scalar_one_or_none()
     if user_model is None or not user_model.is_active:
@@ -132,7 +135,10 @@ async def get_current_user(
     if payload.get("type") != "access":
         raise InvalidToken("Not an access token")
 
-    user_id = uuid.UUID(payload["sub"])
+    try:
+        user_id = uuid.UUID(payload["sub"])
+    except ValueError, KeyError, TypeError:
+        raise InvalidToken("Malformed token subject") from None
     result = await db.execute(select(UserModel).where(UserModel.id == user_id))
     user_model = result.scalar_one_or_none()
     if user_model is None:

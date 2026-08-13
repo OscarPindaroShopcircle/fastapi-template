@@ -2,7 +2,7 @@ from typing import Annotated
 
 from pydantic import EmailStr, Field
 
-from ..db.models.core.enums import UserRole
+from ..db.enums import UserRole
 from ..schemas import AppBaseModel, TimestampMixin, UUIDField
 
 

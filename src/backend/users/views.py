@@ -1,6 +1,6 @@
 from datetime import UTC, datetime
 
-from fastapi import APIRouter, Depends, Form, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import HTMLResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,7 +16,7 @@ from ..auth.service import (
 )
 from ..config import AppConfig, get_app_config
 from ..dependencies import get_catalog_dep, get_db_session
-from ..db.models.core.enums import UserRole
+from ..db.enums import UserRole
 from ..users.schemas import User
 from ..users.service import get_all_users, get_user
 
@@ -79,29 +79,23 @@ async def invite_user_form(
 
 @router.post("/admin/users/invite", response_class=HTMLResponse)
 async def invite_user_submit(
-    email: str = Form(...),
-    role: str = Form("member"),
+    body: InvitationCreate,
     catalog=Depends(get_catalog_dep),
     db: AsyncSession = Depends(get_db_session),
     config: AppConfig = Depends(get_app_config),
     user: User = Depends(get_current_admin_user),
 ):
-    """Create an invitation via htmx form submit.
+    """Create an invitation via htmx JSON submit.
 
     On success, returns the updated invitations table so htmx can
     swap it in place. On conflict (already invited), returns the
     dialog again with an error alert.
     """
-    try:
-        role_enum = UserRole(role)
-    except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid role")
-
     expire_days = config.auth.invitation_expire_days if config.auth else 7
     try:
         await create_invitation_service(
             db,
-            InvitationCreate(email=email, role=role_enum),
+            body,
             user.id,
             expire_days=expire_days,
         )
@@ -110,9 +104,9 @@ async def invite_user_submit(
             "pages.admin.InviteDialog",
             current_user=user,
             roles=_available_roles(),
-            error=f"An invitation for {email} already exists",
-            email=email,
-            role=role,
+            error=f"An invitation for {body.email} already exists",
+            email=body.email,
+            role=body.role,
         )
 
     invitations = await _build_invitations(db)

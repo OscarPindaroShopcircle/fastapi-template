@@ -8,9 +8,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ...config import AppConfig, get_app_config
-from ...db.models.core.enums import UserRole
+from ...db.enums import UserRole
 from ...dependencies import get_db_session
-from ...db.models import UserModel
+from ...users.models import UserModel
 from ..exceptions import AuthError, InvalidCredentials, InvalidToken
 from ..schemas import LoginRequest, RefreshRequest, RegisterRequest, TokenResponse
 from ..service import (

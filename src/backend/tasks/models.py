@@ -1,9 +1,25 @@
-from sqlalchemy import CheckConstraint, Enum, Float, String
+from enum import Enum
+
+from sqlalchemy import CheckConstraint, Enum as SAEnum, Float, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from ...db import Base
-from .enums import TaskStatus
-from ...mixins import TimestampMixin, UUIDv7PrimaryKeyMixin
+from ..db.db import Base
+from ..db.mixins import TimestampMixin, UUIDv7PrimaryKeyMixin
+
+
+class TaskStatus(str, Enum):
+    """Lifecycle status of an async Task.
+
+    WAITING     → created but blocked on something else before it can start
+    IN_PROGRESS → currently running
+    FAILED      → terminated with an error
+    SUCCESS     → completed successfully
+    """
+
+    WAITING = "WAITING"
+    IN_PROGRESS = "IN_PROGRESS"
+    FAILED = "FAILED"
+    SUCCESS = "SUCCESS"
 
 
 class TaskModel(Base, UUIDv7PrimaryKeyMixin, TimestampMixin):
@@ -27,7 +43,7 @@ class TaskModel(Base, UUIDv7PrimaryKeyMixin, TimestampMixin):
 
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     status: Mapped[TaskStatus] = mapped_column(
-        Enum(TaskStatus),
+        SAEnum(TaskStatus),
         nullable=False,
         default=TaskStatus.WAITING,
     )

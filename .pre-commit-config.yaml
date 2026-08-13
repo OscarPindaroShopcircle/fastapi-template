@@ -25,3 +25,11 @@ repos:
       - id: pydantic-yaml-guard
         args: ['--config-files', 'src/backend/config.py', 'src/backend/config.py']
       - id: telegram-token-guard
+  - repo: local
+    hooks:
+      - id: model-registry
+        name: Sync db/registry.py with model classes
+        entry: uv run python -m pre_commits.model_registry
+        language: system
+        pass_filenames: false
+        always_run: true

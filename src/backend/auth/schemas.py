@@ -3,7 +3,7 @@ from typing import Annotated, Optional
 
 from pydantic import ConfigDict, Field
 
-from ..db.models.core.enums import UserRole
+from ..db.enums import UserRole
 from ..schemas import AppBaseModelStripped, UUIDField
 
 

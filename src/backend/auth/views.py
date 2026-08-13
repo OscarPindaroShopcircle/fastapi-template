@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Form, Query
+from fastapi import APIRouter, Depends, Query
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -6,7 +6,7 @@ from ..config import AppConfig, get_app_config
 from ..dependencies import get_catalog_dep, get_db_session
 from .dependencies import get_current_user
 from .exceptions import AuthError, InvalidCredentials, NotInvited
-from .schemas import RegisterRequest
+from .schemas import LoginRequest, RegisterRequest
 from .service import login_with_password, register_with_password
 from .sso import build_google_sso
 from .tokens import create_access_token, create_refresh_token, set_auth_cookies
@@ -33,14 +33,13 @@ async def login_page(
 
 @router.post("/auth/login-form")
 async def login_form(
-    email: str = Form(...),
-    password: str = Form(...),
+    body: LoginRequest,
     db: AsyncSession = Depends(get_db_session),
     config: AppConfig = Depends(get_app_config),
 ):
-    """Browser form-based login — sets cookies and redirects to /."""
+    """Browser form-based login (JSON body) — sets cookies and redirects to /."""
     try:
-        user = await login_with_password(db, email, password)
+        user = await login_with_password(db, body.email, body.password)
     except InvalidCredentials:
         return RedirectResponse(
             url="/login?error=Invalid email or password", status_code=303
@@ -54,19 +53,13 @@ async def login_form(
 
 @router.post("/auth/register-form")
 async def register_form(
-    name: str = Form(...),
-    email: str = Form(...),
-    password: str = Form(...),
+    body: RegisterRequest,
     db: AsyncSession = Depends(get_db_session),
     config: AppConfig = Depends(get_app_config),
 ):
-    """Browser form-based registration — sets cookies and redirects to /."""
+    """Browser form-based registration (JSON body) — sets cookies and redirects to /."""
     try:
-        user = await register_with_password(
-            db,
-            RegisterRequest(name=name, email=email, password=password),
-            config,
-        )
+        user = await register_with_password(db, body, config)
     except NotInvited:
         return RedirectResponse(
             url="/login?mode=register&error=This email is not invited",

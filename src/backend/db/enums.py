@@ -1,36 +1,14 @@
-"""Enumerations shared by the database models.
+"""Enumerations shared across the database layer or by multiple features.
 
 Backed by SQLAlchemy `Enum(...)` columns on the models. We prefer real enums
 over free string columns so the set of valid values is enforced at the DB level.
+
+Feature-only enums (e.g. ``TaskStatus``, ``StorageType``) live next to their
+owning model in ``<feature>/models.py``; only cross-feature or infrastructure
+enums live here.
 """
 
 from enum import Enum
-
-
-class TaskStatus(str, Enum):
-    """Lifecycle status of an async Task.
-
-    WAITING     → created but blocked on something else before it can start
-    IN_PROGRESS → currently running
-    FAILED      → terminated with an error
-    SUCCESS     → completed successfully
-    """
-
-    WAITING = "WAITING"
-    IN_PROGRESS = "IN_PROGRESS"
-    FAILED = "FAILED"
-    SUCCESS = "SUCCESS"
-
-
-class StorageType(str, Enum):
-    """Where a File physically lives.
-
-    Only LOCAL is wired up for now; the rest are placeholders for the
-    filesystem backends we'll add later (S3, Azure Blob, Railway volumes).
-    """
-
-    LOCAL = "LOCAL"
-    S3 = "S3"
 
 
 class FeedbackValue(str, Enum):

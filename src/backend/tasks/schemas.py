@@ -2,7 +2,7 @@ from typing import Annotated
 
 from pydantic import Field
 
-from ..db.models.core.enums import TaskStatus
+from .models import TaskStatus
 from ..schemas import AppBaseModel, TimestampMixin, UUIDField
 
 

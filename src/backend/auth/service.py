@@ -5,11 +5,11 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..config import AppConfig
-from ..db.models.core.enums import UserRole
-from ..db.models import (
+from ..db.enums import UserRole
+from ..users.models import UserModel
+from .models import (
     InvitationModel,
     UserAuthProviderModel,
-    UserModel,
     UserPasswordModel,
 )
 from .exceptions import (

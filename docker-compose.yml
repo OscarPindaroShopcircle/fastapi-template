@@ -14,7 +14,7 @@ services:
       APP_DB_USER: ${DATABASE__USER:?DATABASE__USER required}
       APP_DB_PASSWORD: ${DATABASE__PASSWORD:?DATABASE__PASSWORD required}
     ports:
-      - "5432:5432"
+      - "5434:5432"
     volumes:
       - postgres_data:/var/lib/postgresql
       - ./deploy/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh:z
@@ -58,7 +58,7 @@ services:
     env_file:
       - .env
     ports:
-      - "8000:8000"
+      - "8001:8000"
     volumes:
       - ./src:/app/src
       - ./templates:/app/templates
