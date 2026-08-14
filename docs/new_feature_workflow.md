@@ -25,7 +25,7 @@ src/backend/feature_name/
 
 ### 2. Create SQLAlchemy Model
 
-**Location:** `src/backend/db/models/feature_name.py`
+**Location:** `src/backend/feature_name/models.py`
 
 ```python
 from sqlalchemy import String
@@ -40,13 +40,7 @@ class FeatureModel(Base, IntegerPrimaryKeyMixin, TimestampMixin):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
 ```
 
-**Important:** Register the model in `src/backend/db/models/__init__.py`:
-
-```python
-from .feature import FeatureModel
-
-__all__ = [..., "FeatureModel"]
-```
+**Important:** The model registry at `src/backend/db/registry.py` must import every feature model. It is maintained automatically by the model registry pre-commit hook; do not edit it by hand. Run the repository's pre-commit checks after adding the model.
 
 ### 3. Create Pydantic Schemas
 
@@ -133,7 +127,7 @@ app.include_router(feature_router)
 
 - [ ] Feature folder created with `__init__.py`, `routes.py`, `schemas.py`, `service.py`, `exceptions.py`
 - [ ] SQLAlchemy model created with appropriate mixins
-- [ ] Model registered in `db/models/__init__.py`
+- [ ] Model registry updated by the model registry pre-commit hook
 - [ ] Pydantic schemas created (Create, Response, Update)
 - [ ] Schemas inherit from `AppBaseModelStripped`
 - [ ] Fields use `Annotated` with `Field` for validation and examples

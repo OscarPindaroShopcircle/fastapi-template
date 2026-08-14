@@ -15,7 +15,8 @@ src/backend/
 ├── db/
 │   ├── db.py          # Base class, DatabaseManager
 │   ├── mixins.py      # Reusable model mixins
-│   └── models/        # SQLAlchemy models
+│   ├── registry.py    # Central SQLAlchemy model registry
+│   └── enums.py       # Shared database enums
 ├── schemas.py         # Shared base schemas (AppBaseModel, ListResponse)
 ├── dependencies.py    # Shared dependencies (get_db_session)
 ├── config.py          # Application configuration
@@ -56,7 +57,7 @@ concept, so they live in the application layer, not the core.
 The same split applies to every concern that has both a generic core and an
 application-shaped view of it:
 
-| Concern | Core side (`db/models/core/`, `<domain>/repository.py`) | Application side (app-specific repository / service) |
+| Concern | Core side (`<domain>/models.py`, `<domain>/repository.py`) | Application side (app-specific repository / service) |
 |---|---|---|
 | Files | `files.FileRepository` (`FileModel`) | app-specific `...FileRepository` (`...FileModel` join table) |
 | Tasks | `tasks.TaskRepository` (`TaskModel`) | app-specific `...TaskRepository` (`...TaskModel` join table) |

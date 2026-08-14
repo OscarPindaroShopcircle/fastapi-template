@@ -47,13 +47,15 @@ class UserModel(Base, IntegerPrimaryKeyMixin, TimestampMixin):
 
 ## Model Registration
 
-All models must be imported in `src/backend/db/models/__init__.py` to ensure they are registered with SQLAlchemy before table creation:
+All feature models live in their feature module, such as `src/backend/users/models.py`. The model registry in `src/backend/db/registry.py` imports every model so Alembic can discover all tables. The registry is maintained automatically by the model registry pre-commit hook; do not edit it by hand.
 
 ```python
-from .user import UserModel
-from .team import TeamModel
+# src/backend/users/models.py
+from ..db.db import Base
 
-__all__ = ["UserModel", "TeamModel"]
+
+class UserModel(Base):
+    ...
 ```
 
-This ensures `Base.metadata.create_all()` creates all tables during application startup.
+Alembic imports the registry before autogeneration, which populates `Base.metadata` with every model.

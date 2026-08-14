@@ -111,10 +111,10 @@ The database is initialized automatically when Docker starts:
 
 #### Step 1: Define Your Model
 
-Create or modify a SQLAlchemy model in `src/backend/db/models/`:
+Create or modify a SQLAlchemy model in the relevant feature module, for example `src/backend/products/models.py`:
 
 ```python
-# src/backend/db/models/product.py
+# src/backend/products/models.py
 from sqlalchemy import String, Numeric
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -130,18 +130,11 @@ class ProductModel(Base, IntegerPrimaryKeyMixin, TimestampMixin):
     description: Mapped[str] = mapped_column(String(1000), nullable=True)
 ```
 
-#### Step 2: Export the Model
+#### Step 2: Register the Model
 
-Add it to `src/backend/db/models/__init__.py`:
+The model registry at `src/backend/db/registry.py` imports every feature model so Alembic can discover it. The registry is maintained automatically by the model registry pre-commit hook; do not edit it by hand.
 
-```python
-from .user import UserModel
-from .product import ProductModel
-
-__all__ = ["UserModel", "ProductModel"]
-```
-
-This ensures Alembic can detect it via `import src.backend.db.models` in `alembic/env.py`.
+After adding the model, run the repository's pre-commit checks to update the registry before generating the migration.
 
 #### Step 3: Generate the Migration
 
@@ -273,8 +266,8 @@ uv run alembic heads
 - **Solution**: Use `host: localhost` in `config.yaml` for local development
 
 ### Migration not detected
-- **Cause**: Model not imported in `alembic/env.py`
-- **Solution**: Ensure model is exported in `src/backend/db/models/__init__.py`
+- **Cause**: Model is not imported by `src/backend/db/registry.py`
+- **Solution**: Run the model registry pre-commit hook and verify the feature model appears in the registry
 
 ### Migration fails with "relation already exists"
 - **Cause**: Table was created manually or migration applied twice
@@ -282,8 +275,8 @@ uv run alembic heads
 
 ## Migration Workflow Summary
 
-1. **Define model** in `src/backend/db/models/`
-2. **Export model** in `src/backend/db/models/__init__.py`
+1. **Define model** in the relevant feature's `models.py`
+2. **Update the registry** with the model registry pre-commit hook
 3. **Generate migration**: `uv run alembic revision --autogenerate -m "description"`
 4. **Review migration** file in `alembic/versions/`
 5. **Apply migration**: `uv run alembic upgrade head` or restart Docker
