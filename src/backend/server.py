@@ -13,7 +13,9 @@ from fastapi.staticfiles import StaticFiles
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    config = get_app_config()
+    config = getattr(app.state, "config", None)
+    if config is None:
+        config = get_app_config()
     db_manager = DatabaseManager(config.database)
     yield
     await db_manager.close()
@@ -27,6 +29,7 @@ def create_app(config: AppConfig | None = None) -> FastAPI:
         title="Fantasy Backend",
         lifespan=lifespan,
     )
+    app.state.config = config
 
     app.add_middleware(
         CORSMiddleware,

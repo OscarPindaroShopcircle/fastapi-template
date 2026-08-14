@@ -1,13 +1,59 @@
+import os
 from functools import lru_cache
-from typing import List, Protocol, Optional
+from typing import Annotated, Any, List, Protocol, Optional
 
-from pydantic import Field, SecretStr, BaseModel
+from dotenv import dotenv_values
+from pydantic import (
+    BaseModel,
+    BeforeValidator,
+    ConfigDict,
+    Field,
+    SecretStr,
+    ValidationError,
+)
 from pydantic_settings import BaseSettings
 from pydantic_settings import (
     SettingsConfigDict,
     PydanticBaseSettingsSource,
     YamlConfigSettingsSource,
 )
+
+
+class ConfigError(RuntimeError):
+    """Raised when application configuration cannot be parsed or validated."""
+
+
+class EnvSecret(BaseModel):
+    """Reference a secret stored in an environment variable."""
+
+    env_var: str = Field(min_length=1)
+    model_config = ConfigDict(extra="forbid")
+
+
+def _resolve_secret_reference(value: Any) -> Any:
+    """Resolve an ``EnvSecret`` mapping before SecretStr validation."""
+    if not isinstance(value, dict) or "env_var" not in value:
+        return value
+
+    variable_name = EnvSecret.model_validate(value).env_var.strip()
+    if not variable_name:
+        raise ValueError("Secret environment variable name cannot be empty")
+
+    resolved_value = os.environ.get(variable_name)
+    if resolved_value is None:
+        resolved_value = dotenv_values(".env").get(variable_name)
+    if resolved_value is None:
+        raise ValueError(f"Environment variable {variable_name!r} is not set")
+    return resolved_value
+
+
+def secret_preview(value: Any) -> str:
+    """Return a masked preview with only the last four characters visible."""
+    raw_value = value.get_secret_value() if isinstance(value, SecretStr) else value
+    return f"****{raw_value[-4:]}" if isinstance(raw_value, str) else ""
+
+
+SecretValue = Annotated[SecretStr, BeforeValidator(_resolve_secret_reference)]
 
 
 class BaseConfig(BaseSettings):
@@ -51,7 +97,7 @@ class PostgresConfig(BaseConfig):
     """PostgreSQL database configuration."""
 
     user: str = Field(description="Database username")
-    password: SecretStr = Field(description="Database password")
+    password: SecretValue = Field(description="Database password")
     host: str = Field(default="localhost", description="Database host")
     port: int = Field(default=5432, description="Database port")
     db: str = Field(description="Database name")
@@ -131,14 +177,14 @@ class GoogleSSOConfig(BaseModel):
     """Google OAuth/OIDC credentials for fastapi-sso."""
 
     client_id: str
-    client_secret: SecretStr
+    client_secret: SecretValue
 
 
 class AuthConfig(BaseModel):
     """Authentication configuration — JWT tokens, Google SSO, invitations."""
 
     google: Optional[GoogleSSOConfig] = None
-    jwt_secret: SecretStr
+    jwt_secret: SecretValue
     access_token_expire_minutes: int = 15
     refresh_token_expire_days: int = 30
     invitation_expire_days: int = 7
@@ -190,5 +236,12 @@ class AppConfig(BaseConfig):
 
 @lru_cache(maxsize=1)
 def get_app_config() -> AppConfig:
-    """Get or create API configuration singleton."""
-    return AppConfig()
+    """Get, validate, and cache the application configuration singleton."""
+    try:
+        return AppConfig()
+    except ValidationError as error:
+        details = "\n".join(
+            f"  {'.'.join(str(part) for part in issue['loc'])}: {issue['msg']}"
+            for issue in error.errors(include_url=False, include_input=False)
+        )
+        raise ConfigError(f"AppConfig validation failed:\n{details}") from None

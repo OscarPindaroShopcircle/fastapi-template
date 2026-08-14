@@ -13,8 +13,6 @@ Usage:
 import os
 import sys
 
-from pydantic import ValidationError
-
 
 def main() -> int:
     yaml_file = os.environ.get("YAML_CONFIG_FILE", "config.yaml")
@@ -23,19 +21,13 @@ def main() -> int:
     print(f"ENV_FILE         = {env_file}")
     print()
 
-    from backend.config import get_app_config
+    from backend.config import ConfigError, get_app_config, secret_preview  # noqa: PLC0415
 
     try:
         config = get_app_config()
-    except ValidationError as e:
-        # Deliberately not printing the ValidationError itself (or e.errors()'s
-        # "input" key) — pydantic includes the raw input_value for every
-        # sibling field in the same nested object, which for `auth` means
-        # google.client_secret would be dumped in plaintext.
+    except ConfigError as error:
         print("AppConfig FAILED to build:\n")
-        for err in e.errors(include_url=False, include_input=False):
-            loc = ".".join(str(p) for p in err["loc"])
-            print(f"  {loc}: {err['msg']}")
+        print(str(error).removeprefix("AppConfig validation failed:\n"))
         return 1
 
     print("AppConfig built successfully:\n")
@@ -55,9 +47,7 @@ def main() -> int:
     if config.auth is None:
         print("  auth = None (auth-protected routes will not work)")
     else:
-        print(
-            f"  auth.jwt_secret set   = {bool(config.auth.jwt_secret.get_secret_value())}"
-        )
+        print(f"  auth.jwt_secret       = {secret_preview(config.auth.jwt_secret)}")
         print(f"  auth.google enabled   = {config.auth.google is not None}")
         print(f"  auth.redirect_uri     = {config.auth.redirect_uri}")
         print(f"  auth.bootstrap_admin  = {config.auth.bootstrap_admin_email}")

@@ -24,6 +24,7 @@ dependencies = [
     "fastapi-sso>=0.21.1",
     "python-multipart>=0.0.32",
     "aiofiles>=25.1.0",
+    "python-dotenv>=1.1.1",
 ]
 
 [build-system]
