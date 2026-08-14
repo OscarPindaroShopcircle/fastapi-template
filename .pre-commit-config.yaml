@@ -33,3 +33,11 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
+      - id: session-commit-guard
+        name: Ban direct database session commits
+        entry: >-
+          uv run python -m pre_commits.session_commit_guard
+          --exclude-file src/backend/dependencies.py
+          --exclude-file src/backend/db/db.py
+        language: system
+        files: \.py$
