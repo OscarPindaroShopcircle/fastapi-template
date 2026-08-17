@@ -14,6 +14,7 @@ from __future__ import annotations
 import zlib
 from datetime import UTC, datetime
 from functools import lru_cache
+from jinjax.catalog import Catalog
 from markupsafe import Markup
 
 import jinjax
@@ -96,7 +97,7 @@ def _build_templates(templates_dir: str):
 
 
 @lru_cache(maxsize=1)
-def get_catalog(components_dir: str):
+def get_catalog(components_dir: str) -> Catalog:
     """Build the JinjaX catalog — the object that manages components.
 
     Components are ``.jinja`` files inside ``components_dir`` (and its

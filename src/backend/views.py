@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
+from jinjax.catalog import Catalog
 
 from .auth.dependencies import get_optional_user
 from .dependencies import get_catalog_dep
@@ -10,7 +11,7 @@ router = APIRouter(tags=["views"])
 
 @router.get("/", response_class=HTMLResponse)
 async def index(
-    catalog=Depends(get_catalog_dep),
+    catalog: Catalog = Depends(get_catalog_dep),
     user: User | None = Depends(get_optional_user),
 ):
     """Home page — redirect to /login if not authenticated."""

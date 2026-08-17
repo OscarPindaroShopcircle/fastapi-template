@@ -1,4 +1,5 @@
 from typing import AsyncGenerator
+from jinjax.catalog import Catalog
 from sqlalchemy.ext.asyncio import AsyncSession
 from .config import get_app_config, AppConfig
 from .db.db import DatabaseManager
@@ -33,7 +34,7 @@ async def get_config() -> AppConfig:
     return get_app_config()
 
 
-def get_catalog_dep(config: AppConfig = Depends(get_app_config)):
+def get_catalog_dep(config: AppConfig = Depends(get_app_config)) -> Catalog:
     """Return the shared JinjaX ``Catalog`` instance.
 
     Requires ``frontend`` to be configured — a view route depending on this
